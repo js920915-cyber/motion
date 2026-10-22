@@ -1,4 +1,5 @@
 import { Composition, Folder } from "remotion";
+import { BumperV1 } from "./bumper/BumperV1";
 import { RSportsPromo } from "./RSportsPromo";
 import { BootScene } from "./scenes/BootScene";
 import { ExpertsScene } from "./scenes/ExpertsScene";
@@ -22,6 +23,9 @@ export const RemotionRoot: React.FC = () => {
         height={1080}
         defaultProps={{ music: true }}
       />
+      <Folder name="Bumper">
+        <Composition id="BumperV1" component={BumperV1} durationInFrames={150} fps={FPS} width={1920} height={1080} />
+      </Folder>
       <Folder name="Scenes">
         <Composition id="Boot" component={BootScene} durationInFrames={SCENES.boot} fps={FPS} width={1920} height={1080} />
         <Composition id="Pain" component={PainScene} durationInFrames={SCENES.pain} fps={FPS} width={1920} height={1080} />
