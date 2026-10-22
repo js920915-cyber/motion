@@ -1,0 +1,32 @@
+{
+  "keiser-rotational-press-a": {
+    "frames": 247,
+    "bestStart": 28,
+    "peakFrame": 35,
+    "meanMotion": 2.39
+  },
+  "keiser-rotational-press-b": {
+    "frames": 245,
+    "bestStart": 178,
+    "peakFrame": 200,
+    "meanMotion": 2.65
+  },
+  "landmine-press": {
+    "frames": 208,
+    "bestStart": 39,
+    "peakFrame": 64,
+    "meanMotion": 3.35
+  },
+  "medicine-ball-throw": {
+    "frames": 90,
+    "bestStart": 44,
+    "peakFrame": 66,
+    "meanMotion": 2.83
+  },
+  "single-leg-squat": {
+    "frames": 132,
+    "bestStart": 30,
+    "peakFrame": 8,
+    "meanMotion": 3.59
+  }
+}
