@@ -10,6 +10,7 @@ import { PainScene } from "./scenes/PainScene";
 import { ProcessScene } from "./scenes/ProcessScene";
 import { ProgramsScene } from "./scenes/ProgramsScene";
 import { SessionScene } from "./scenes/SessionScene";
+import { FEED, REELS } from "./layout";
 import { FPS, SCENES, TOTAL } from "./theme";
 
 export const RemotionRoot: React.FC = () => {
@@ -24,6 +25,11 @@ export const RemotionRoot: React.FC = () => {
         height={1080}
         defaultProps={{ music: true }}
       />
+      <Folder name="Instagram">
+        {/* 같은 장면을 세로 배치로: 릴스 9:16, 피드 게시물 4:5 */}
+        <Composition id="RSportsPromoReels" component={RSportsPromo} durationInFrames={TOTAL} fps={FPS} {...REELS} defaultProps={{ music: true }} />
+        <Composition id="RSportsPromoFeed" component={RSportsPromo} durationInFrames={TOTAL} fps={FPS} {...FEED} defaultProps={{ music: true }} />
+      </Folder>
       <Folder name="Bumper">
         <Composition id="BumperV1" component={BumperV1} durationInFrames={150} fps={FPS} width={1920} height={1080} />
       </Folder>

@@ -4,6 +4,7 @@ import { Halftone } from "../components/Halftone";
 import { PopShape } from "../components/Shapes";
 import { Sfx } from "../components/Sfx";
 import { Typewriter } from "../components/Typewriter";
+import { useLayout } from "../layout";
 import { BEAT, C, CLAMP, EASE_OUT, MONO, SANS } from "../theme";
 
 const INFO = [
@@ -16,6 +17,8 @@ export const OutroScene: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const pop = spring({ frame, fps, config: { damping: 14, stiffness: 140 } });
+  const { w, h, portrait, tall } = useLayout();
+  const hole = portrait ? 540 : 460;
 
   return (
     <AbsoluteFill style={{ backgroundColor: C.bg, justifyContent: "center", alignItems: "center" }}>
@@ -23,21 +26,21 @@ export const OutroScene: React.FC = () => {
         <Halftone
           mode="rays"
           color={C.accent}
-          hole={460}
+          hole={hole}
           speed={0.6}
           reveal={interpolate(frame, [0, 2 * BEAT], [0, 1], { ...CLAMP, easing: EASE_OUT })}
         />
       </AbsoluteFill>
-      <AbsoluteFill style={{ background: `radial-gradient(circle at center, ${C.bg} 0, ${C.bg} 420px, transparent 620px)` }} />
+      <AbsoluteFill style={{ background: `radial-gradient(circle at center, ${C.bg} 0, ${C.bg} ${hole - 40}px, transparent ${hole + 160}px)` }} />
 
-      <PopShape kind="circle" x={300} y={260} size={90} color={C.accent} stroke={6} at={BEAT} />
-      <PopShape kind="triangle" x={1640} y={250} size={70} color={C.red} filled at={1.5 * BEAT} spin={0.3} />
-      <PopShape kind="plus" x={1620} y={840} size={48} color={C.white} filled at={2 * BEAT} spin={-0.4} />
-      <PopShape kind="square" x={290} y={830} size={56} color={C.dim} at={2.5 * BEAT} rotate={15} spin={0.25} />
+      <PopShape kind="circle" x={0.156 * w} y={0.241 * h} size={90} color={C.accent} stroke={6} at={BEAT} />
+      <PopShape kind="triangle" x={0.854 * w} y={0.231 * h} size={70} color={C.red} filled at={1.5 * BEAT} spin={0.3} />
+      <PopShape kind="plus" x={0.844 * w} y={0.778 * h} size={48} color={C.white} filled at={2 * BEAT} spin={-0.4} />
+      <PopShape kind="square" x={0.151 * w} y={0.769 * h} size={56} color={C.dim} at={2.5 * BEAT} rotate={15} spin={0.25} />
 
       <div style={{ position: "relative", display: "flex", flexDirection: "column", alignItems: "center" }}>
         <div style={{ scale: pop }}>
-          <BrandLogo width={820} variant="white" />
+          <BrandLogo width={portrait ? (tall ? 860 : 780) : 820} variant="white" />
         </div>
 
         <Typewriter
@@ -47,7 +50,7 @@ export const OutroScene: React.FC = () => {
           style={{ fontFamily: SANS, fontWeight: 700, fontSize: 52, color: C.white, marginTop: 40, letterSpacing: -1 }}
         />
 
-        <div style={{ marginTop: 40, display: "flex", flexDirection: "column", gap: 14, alignItems: "center" }}>
+        <div style={{ marginTop: 40, display: "flex", flexDirection: "column", gap: portrait ? 22 : 14, alignItems: "center" }}>
           {INFO.map((r, i) => {
             const s = (3 + i) * BEAT;
             return (
@@ -55,13 +58,15 @@ export const OutroScene: React.FC = () => {
                 key={r.k}
                 style={{
                   display: "flex",
-                  gap: 24,
-                  alignItems: "baseline",
+                  // 세로 화면: 라벨을 값 위에
+                  flexDirection: portrait ? "column" : "row",
+                  gap: portrait ? 6 : 24,
+                  alignItems: portrait ? "center" : "baseline",
                   opacity: interpolate(frame, [s, s + 6], [0, 1], CLAMP),
                 }}
               >
                 <span style={{ fontFamily: MONO, fontSize: 20, letterSpacing: 3, color: C.dim }}>{r.k}</span>
-                <span style={{ fontFamily: SANS, fontWeight: 500, fontSize: 36, color: C.white }}>{r.v}</span>
+                <span style={{ fontFamily: SANS, fontWeight: 500, fontSize: portrait ? (tall ? 34 : 31) : 36, color: C.white }}>{r.v}</span>
               </div>
             );
           })}

@@ -3,6 +3,7 @@ import { SectionLabel } from "../components/Brand";
 import { PopShape, Shape, ShapeKind } from "../components/Shapes";
 import { Sfx } from "../components/Sfx";
 import { Typewriter } from "../components/Typewriter";
+import { useLayout } from "../layout";
 import { BEAT, C, CLAMP, EASE_OUT, MONO, SANS } from "../theme";
 
 const CREDENTIALS: { tag: string; text: string; shape: ShapeKind }[] = [
@@ -12,8 +13,6 @@ const CREDENTIALS: { tag: string; text: string; shape: ShapeKind }[] = [
   { tag: "TEAM", text: "국가대표 피지컬트레이너", shape: "diamond" },
 ];
 
-const GAUGE = 400;
-const GAUGE_R = 180;
 const COUNT_FROM = BEAT;
 const COUNT_TO = 3 * BEAT;
 
@@ -26,11 +25,70 @@ for (let f = COUNT_FROM + 1; f <= COUNT_TO; f++) {
   if (countAt(f) !== countAt(f - 1) && (TICKS.length === 0 || f - TICKS[TICKS.length - 1] >= 2)) TICKS.push(f);
 }
 
+// 원형 게이지 + 100% 카운터. size 는 게이지 지름(px)
+const Gauge: React.FC<{ size: number; count: number; on: boolean }> = ({ size, count, on }) => {
+  const r = size * 0.45;
+  const sw = size * 0.045;
+  const circ = 2 * Math.PI * r;
+  return (
+    <div style={{ position: "relative", width: size, height: size, flexShrink: 0 }}>
+      <svg width={size} height={size} style={{ position: "absolute", inset: 0 }}>
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={C.line} strokeWidth={sw} />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={r}
+          fill="none"
+          stroke={C.accent}
+          strokeWidth={sw}
+          strokeLinecap="round"
+          strokeDasharray={circ}
+          strokeDashoffset={circ * (1 - count / 100)}
+          transform={`rotate(-90 ${size / 2} ${size / 2})`}
+        />
+        {/* 게이지 끝을 따라 도는 레드 점 */}
+        <circle
+          cx={size / 2 + r * Math.sin((count / 100) * 2 * Math.PI)}
+          cy={size / 2 - r * Math.cos((count / 100) * 2 * Math.PI)}
+          r={size * 0.035}
+          fill={C.red}
+          opacity={on ? 1 : 0}
+        />
+      </svg>
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          fontFamily: SANS,
+          fontWeight: 900,
+          fontSize: size * 0.335,
+          color: C.white,
+          letterSpacing: -6,
+        }}
+      >
+        {count}
+        <span style={{ fontSize: size * 0.175, color: C.accent }}>%</span>
+      </div>
+    </div>
+  );
+};
+
 // 05. 전문가 소개: 원형 게이지 100% 카운터 + 자격 리스트
 export const ExpertsScene: React.FC = () => {
   const frame = useCurrentFrame();
   const count = countAt(frame);
-  const circ = 2 * Math.PI * GAUGE_R;
+  const { w, h, portrait, tall } = useLayout();
+  const title = (
+    <Typewriter
+      text={portrait ? "전 직원\n물리치료사" : "전 직원 물리치료사"}
+      start={BEAT}
+      speed={0.5}
+      style={{ fontFamily: SANS, fontWeight: 900, fontSize: 84, lineHeight: 1.15, color: C.white, letterSpacing: -3, marginTop: portrait ? 20 : 30 }}
+    />
+  );
 
   return (
     <AbsoluteFill
@@ -38,68 +96,36 @@ export const ExpertsScene: React.FC = () => {
         backgroundColor: C.bg,
         backgroundImage: `linear-gradient(${C.line} 1px, transparent 1px), linear-gradient(90deg, ${C.line} 1px, transparent 1px)`,
         backgroundSize: "120px 120px",
-        padding: "150px 150px",
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 90,
+        padding: portrait ? "0 60px" : "150px 150px",
+        flexDirection: portrait ? "column" : "row",
+        alignItems: portrait ? "stretch" : "center",
+        justifyContent: "center",
+        gap: portrait ? (tall ? 70 : 44) : 90,
       }}
     >
-      <PopShape kind="plus" x={1790} y={170} size={40} color={C.red} filled at={BEAT} spin={0.5} />
-      <PopShape kind="circle" x={130} y={930} size={70} color={C.accentDim} stroke={5} at={2 * BEAT} />
+      <PopShape kind="plus" x={0.932 * w} y={0.157 * h} size={40} color={C.red} filled at={BEAT} spin={0.5} />
+      <PopShape kind="circle" x={0.068 * w} y={0.861 * h} size={70} color={C.accentDim} stroke={5} at={2 * BEAT} />
 
-      <div style={{ width: 640 }}>
-        <SectionLabel no="01" text="EXPERTS" />
-        <div style={{ position: "relative", width: GAUGE, height: GAUGE, marginTop: 34 }}>
-          <svg width={GAUGE} height={GAUGE} style={{ position: "absolute", inset: 0 }}>
-            <circle cx={GAUGE / 2} cy={GAUGE / 2} r={GAUGE_R} fill="none" stroke={C.line} strokeWidth={18} />
-            <circle
-              cx={GAUGE / 2}
-              cy={GAUGE / 2}
-              r={GAUGE_R}
-              fill="none"
-              stroke={C.accent}
-              strokeWidth={18}
-              strokeLinecap="round"
-              strokeDasharray={circ}
-              strokeDashoffset={circ * (1 - count / 100)}
-              transform={`rotate(-90 ${GAUGE / 2} ${GAUGE / 2})`}
-            />
-            {/* 게이지 끝을 따라 도는 레드 점 */}
-            <circle
-              cx={GAUGE / 2 + GAUGE_R * Math.sin((count / 100) * 2 * Math.PI)}
-              cy={GAUGE / 2 - GAUGE_R * Math.cos((count / 100) * 2 * Math.PI)}
-              r={14}
-              fill={C.red}
-              opacity={frame >= COUNT_FROM ? 1 : 0}
-            />
-          </svg>
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              fontFamily: SANS,
-              fontWeight: 900,
-              fontSize: 134,
-              color: C.white,
-              letterSpacing: -6,
-            }}
-          >
-            {count}
-            <span style={{ fontSize: 70, color: C.accent }}>%</span>
+      {portrait ? (
+        // 세로: 게이지 옆에 라벨과 제목
+        <div style={{ display: "flex", alignItems: "center", gap: 44 }}>
+          <Gauge size={tall ? 340 : 300} count={count} on={frame >= COUNT_FROM} />
+          <div>
+            <SectionLabel no="01" text="EXPERTS" />
+            {title}
           </div>
         </div>
-        <Typewriter
-          text="전 직원 물리치료사"
-          start={BEAT}
-          speed={0.5}
-          style={{ fontFamily: SANS, fontWeight: 900, fontSize: 84, color: C.white, letterSpacing: -3, marginTop: 30 }}
-        />
-      </div>
+      ) : (
+        <div style={{ width: 640 }}>
+          <SectionLabel no="01" text="EXPERTS" />
+          <div style={{ marginTop: 34 }}>
+            <Gauge size={400} count={count} on={frame >= COUNT_FROM} />
+          </div>
+          {title}
+        </div>
+      )}
 
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 22 }}>
+      <div style={{ flex: portrait ? undefined : 1, display: "flex", flexDirection: "column", gap: portrait ? 18 : 22 }}>
         {CREDENTIALS.map((c, i) => {
           const s = (3 + i) * BEAT;
           return (

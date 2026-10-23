@@ -2,21 +2,23 @@ import { AbsoluteFill, Interactive, interpolate, useCurrentFrame } from "remotio
 import { PopShape, Shape } from "../components/Shapes";
 import { Sfx } from "../components/Sfx";
 import { Typewriter } from "../components/Typewriter";
+import { useLayout } from "../layout";
 import { BEAT, C, CLAMP, EASE_OUT, MONO, SANS } from "../theme";
 
-// 헤드라인 주변에서 비트마다 하나씩 튀어나오는 도형
+// 헤드라인 주변에서 비트마다 하나씩 튀어나오는 도형(위치는 화면 비율)
 const SHAPES = [
-  { kind: "circle", x: 330, y: 270, size: 38, color: C.red, filled: true, at: BEAT },
-  { kind: "triangle", x: 1590, y: 300, size: 74, color: C.accent, at: 1.5 * BEAT, spin: 0.4 },
-  { kind: "plus", x: 300, y: 790, size: 52, color: C.accent, filled: true, at: 2 * BEAT },
-  { kind: "square", x: 1610, y: 790, size: 58, color: C.dim, at: 2.5 * BEAT, rotate: 18, spin: -0.3 },
-  { kind: "diamond", x: 520, y: 180, size: 28, color: C.white, filled: true, at: 3 * BEAT },
-  { kind: "circle", x: 1420, y: 880, size: 22, color: C.red, filled: true, at: 3.5 * BEAT },
+  { kind: "circle", fx: 0.172, fy: 0.25, size: 38, color: C.red, filled: true, at: BEAT },
+  { kind: "triangle", fx: 0.828, fy: 0.278, size: 74, color: C.accent, at: 1.5 * BEAT, spin: 0.4 },
+  { kind: "plus", fx: 0.156, fy: 0.731, size: 52, color: C.accent, filled: true, at: 2 * BEAT },
+  { kind: "square", fx: 0.839, fy: 0.731, size: 58, color: C.dim, at: 2.5 * BEAT, rotate: 18, spin: -0.3 },
+  { kind: "diamond", fx: 0.271, fy: 0.167, size: 28, color: C.white, filled: true, at: 3 * BEAT },
+  { kind: "circle", fx: 0.74, fy: 0.815, size: 22, color: C.red, filled: true, at: 3.5 * BEAT },
 ] as const;
 
 // 01. 터미널 부팅 + 타이핑 헤드라인
 export const BootScene: React.FC = () => {
   const frame = useCurrentFrame();
+  const { w, h, portrait } = useLayout();
   const pct = Math.round(interpolate(frame, [4, 70], [0, 100], { ...CLAMP, easing: EASE_OUT }));
 
   return (
@@ -41,8 +43,8 @@ export const BootScene: React.FC = () => {
           <Shape kind="circle" size={900} color={C.line} stroke={3} dashed />
         </div>
       </AbsoluteFill>
-      {SHAPES.map((s, i) => (
-        <PopShape key={i} {...s} />
+      {SHAPES.map(({ fx, fy, ...s }, i) => (
+        <PopShape key={i} x={fx * w} y={fy * h} {...s} />
       ))}
 
       <Interactive.Div
@@ -61,13 +63,22 @@ export const BootScene: React.FC = () => {
       </Interactive.Div>
 
       <Typewriter
-        text="다시, 건강한 일상으로"
+        text={portrait ? "다시,\n건강한 일상으로" : "다시, 건강한 일상으로"}
         start={10}
         speed={0.45}
-        style={{ position: "relative", fontFamily: SANS, fontWeight: 900, fontSize: 140, color: C.white, letterSpacing: -4 }}
+        style={{
+          position: "relative",
+          fontFamily: SANS,
+          fontWeight: 900,
+          fontSize: portrait ? 128 : 140,
+          lineHeight: 1.15,
+          textAlign: "center",
+          color: C.white,
+          letterSpacing: -4,
+        }}
       />
 
-      <div style={{ position: "relative", width: 640, marginTop: 70 }}>
+      <div style={{ position: "relative", width: portrait ? 560 : 640, marginTop: 70 }}>
         <div style={{ height: 3, background: C.line }}>
           <div style={{ height: 3, width: `${pct}%`, background: C.accent }} />
         </div>

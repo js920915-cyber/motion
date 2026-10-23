@@ -1,6 +1,7 @@
 import { AbsoluteFill, interpolate, useCurrentFrame } from "remotion";
 import { Shape } from "../components/Shapes";
 import { Sfx } from "../components/Sfx";
+import { useLayout } from "../layout";
 import { BEAT, C, CLAMP, EASE_OUT, MONO, SANS } from "../theme";
 
 const PARTS = [
@@ -13,6 +14,7 @@ const PARTS = [
 // 02. 비트마다 통증 부위가 바뀜
 export const PainScene: React.FC = () => {
   const frame = useCurrentFrame();
+  const { h } = useLayout();
   const idx = Math.min(PARTS.length - 1, Math.floor(frame / BEAT));
   const local = frame - idx * BEAT;
 
@@ -79,7 +81,7 @@ export const PainScene: React.FC = () => {
       <div
         style={{
           position: "absolute",
-          bottom: 128,
+          top: h / 2 + 368,
           display: "flex",
           alignItems: "center",
           gap: 16,

@@ -3,6 +3,7 @@ import { BrandLogo } from "../components/Brand";
 import { Halftone } from "../components/Halftone";
 import { PopShape } from "../components/Shapes";
 import { Sfx } from "../components/Sfx";
+import { useLayout } from "../layout";
 import { BEAT, C, CLAMP, EASE_IN_OUT, EASE_OUT, MONO } from "../theme";
 
 // 흰 원이 열리는 프레임. 이후 HUD도 밝은 톤으로 바뀝니다(RSportsPromo 의 lightFrom).
@@ -15,7 +16,9 @@ export const LogoScene: React.FC = () => {
   const pop = spring({ frame: frame - 2 * BEAT, fps, config: { damping: 13, stiffness: 150 } });
   // 비트마다 링이 살짝 튀는 펄스
   const pulse = 1 + 0.03 * Math.exp(-(frame % BEAT) / 4);
-  const iris = interpolate(frame, [LOGO_IRIS, LOGO_IRIS + 12], [0, 1150], { ...CLAMP, easing: EASE_IN_OUT });
+  const { w, h, portrait } = useLayout();
+  const logoW = portrait ? Math.round(w * 0.86) : 940;
+  const iris = interpolate(frame, [LOGO_IRIS, LOGO_IRIS + 12], [0, Math.hypot(w, h) / 2 + 50], { ...CLAMP, easing: EASE_IN_OUT });
 
   return (
     <AbsoluteFill style={{ backgroundColor: C.bg }}>
@@ -32,19 +35,19 @@ export const LogoScene: React.FC = () => {
       <AbsoluteFill style={{ clipPath: `circle(${iris}px at 50% 50%)` }}>
         <AbsoluteFill style={{ backgroundColor: C.paper }} />
         <AbsoluteFill style={{ scale: pulse, opacity: 0.9 }}>
-          <Halftone mode="rings" color="#DCE5F4" background={C.paper} hole={560} speed={1.2} />
+          <Halftone mode="rings" color="#DCE5F4" background={C.paper} hole={portrait ? logoW / 2 + 60 : 560} speed={1.2} />
         </AbsoluteFill>
 
-        <PopShape kind="triangle" x={470} y={330} size={84} color={C.red} filled at={3 * BEAT} rotate={-12} spin={0.25} />
-        <PopShape kind="circle" x={1480} y={300} size={120} color={C.navy} stroke={8} at={3 * BEAT + 3} />
-        <PopShape kind="plus" x={1500} y={790} size={58} color={C.navy} filled at={3.5 * BEAT} spin={-0.4} />
-        <PopShape kind="square" x={430} y={770} size={56} color={C.navy} at={3.5 * BEAT + 3} rotate={15} spin={0.3} />
-        <PopShape kind="circle" x={600} y={860} size={20} color={C.red} filled at={4 * BEAT} />
-        <PopShape kind="diamond" x={1330} y={190} size={26} color={C.red} filled at={4 * BEAT + 3} />
+        <PopShape kind="triangle" x={0.245 * w} y={0.306 * h} size={84} color={C.red} filled at={3 * BEAT} rotate={-12} spin={0.25} />
+        <PopShape kind="circle" x={0.771 * w} y={0.278 * h} size={120} color={C.navy} stroke={8} at={3 * BEAT + 3} />
+        <PopShape kind="plus" x={0.781 * w} y={0.731 * h} size={58} color={C.navy} filled at={3.5 * BEAT} spin={-0.4} />
+        <PopShape kind="square" x={0.224 * w} y={0.713 * h} size={56} color={C.navy} at={3.5 * BEAT + 3} rotate={15} spin={0.3} />
+        <PopShape kind="circle" x={0.3125 * w} y={0.796 * h} size={20} color={C.red} filled at={4 * BEAT} />
+        <PopShape kind="diamond" x={0.693 * w} y={0.176 * h} size={26} color={C.red} filled at={4 * BEAT + 3} />
 
         <AbsoluteFill style={{ justifyContent: "center", alignItems: "center", gap: 46 }}>
           <div style={{ scale: pop, opacity: frame >= 2 * BEAT ? 1 : 0 }}>
-            <BrandLogo width={940} />
+            <BrandLogo width={logoW} />
           </div>
           <div
             style={{

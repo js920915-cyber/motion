@@ -3,6 +3,7 @@ import { SectionLabel } from "../components/Brand";
 import { Shape, ShapeKind } from "../components/Shapes";
 import { Sfx } from "../components/Sfx";
 import { Typewriter } from "../components/Typewriter";
+import { useLayout } from "../layout";
 import { BEAT, C, CLAMP, EASE_OUT, MONO, SANS } from "../theme";
 
 const PROGRAMS: { ko: string; en: string; shape: ShapeKind }[] = [
@@ -25,17 +26,33 @@ export const ProgramsScene: React.FC = () => {
   const sweepStart = firstCard + PROGRAMS.length * step + BEAT;
   const sweepStep = step / 2;
   const active = Math.floor((frame - sweepStart) / sweepStep);
+  const { portrait, tall } = useLayout();
+  // 세로 화면: 2열 x 4줄
+  const cardH = portrait ? (tall ? 210 : 160) : 230;
 
   return (
-    <AbsoluteFill style={{ backgroundColor: C.bg, padding: "150px 150px 140px" }}>
+    <AbsoluteFill
+      style={{
+        backgroundColor: C.bg,
+        padding: portrait ? "0 60px" : "150px 150px 140px",
+        justifyContent: portrait ? "center" : "flex-start",
+      }}
+    >
       <SectionLabel no="02" text="PROGRAM" />
       <Typewriter
         text="부위별 1:1 맞춤 재활"
         start={4}
         speed={0.6}
-        style={{ fontFamily: SANS, fontWeight: 900, fontSize: 96, color: C.white, letterSpacing: -3, marginTop: 18 }}
+        style={{ fontFamily: SANS, fontWeight: 900, fontSize: portrait ? 82 : 96, color: C.white, letterSpacing: -3, marginTop: 18 }}
       />
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 26, marginTop: 56 }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: `repeat(${portrait ? 2 : 4}, 1fr)`,
+          gap: portrait ? 20 : 26,
+          marginTop: portrait ? (tall ? 48 : 34) : 56,
+        }}
+      >
         {PROGRAMS.map((p, i) => {
           const s = firstCard + i * step;
           const lit = active === i;
@@ -44,8 +61,8 @@ export const ProgramsScene: React.FC = () => {
               key={p.en}
               style={{
                 position: "relative",
-                height: 230,
-                padding: "28px 30px",
+                height: cardH,
+                padding: portrait && !tall ? "22px 26px" : "28px 30px",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "space-between",
@@ -63,14 +80,14 @@ export const ProgramsScene: React.FC = () => {
               <div
                 style={{
                   position: "absolute",
-                  right: 30,
-                  top: 78,
+                  right: portrait && !tall ? 26 : 30,
+                  top: portrait && !tall ? 56 : 78,
                   rotate: `${interpolate(frame, [s, s + 14], [-120, 0], { ...CLAMP, easing: EASE_OUT })}deg`,
                 }}
               >
-                <Shape kind={p.shape} size={46} color={lit ? C.white : i % 3 === 0 ? C.red : C.accentDim} stroke={5} />
+                <Shape kind={p.shape} size={portrait && !tall ? 38 : 46} color={lit ? C.white : i % 3 === 0 ? C.red : C.accentDim} stroke={5} />
               </div>
-              <div style={{ fontFamily: SANS, fontWeight: 900, fontSize: 46, letterSpacing: -1.5, color: C.white }}>
+              <div style={{ fontFamily: SANS, fontWeight: 900, fontSize: portrait ? (tall ? 42 : 38) : 46, letterSpacing: -1.5, color: C.white }}>
                 {p.ko}
               </div>
             </div>
