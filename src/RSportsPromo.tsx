@@ -5,7 +5,6 @@ import { PixelWipe } from "./components/PixelWipe";
 import { Sfx } from "./components/Sfx";
 import { BootScene } from "./scenes/BootScene";
 import { ExpertsScene } from "./scenes/ExpertsScene";
-import { LOGO_IRIS, LogoScene } from "./scenes/LogoScene";
 import { MissionScene } from "./scenes/MissionScene";
 import { OutroScene } from "./scenes/OutroScene";
 import { PainScene } from "./scenes/PainScene";
@@ -21,7 +20,6 @@ const ORDER = [
   { key: "boot", label: "BOOT", Comp: BootScene, lightFrom: null },
   { key: "pain", label: "PAIN POINT", Comp: PainScene, lightFrom: null },
   { key: "session", label: "IN SESSION", Comp: SessionScene, lightFrom: null },
-  { key: "logo", label: "IDENTITY", Comp: LogoScene, lightFrom: LOGO_IRIS + 6 },
   { key: "experts", label: "EXPERTS", Comp: ExpertsScene, lightFrom: null },
   { key: "programs", label: "PROGRAM", Comp: ProgramsScene, lightFrom: null },
   { key: "process", label: "SYSTEM", Comp: ProcessScene, lightFrom: 0 },
@@ -31,7 +29,7 @@ const ORDER = [
 
 // 장면 경계(해당 장면이 시작되는 지점)의 픽셀 와이프 색. 없는 경계는 휙 소리만 넣습니다.
 const WIPE_INTO: Partial<Record<(typeof ORDER)[number]["key"], string>> = {
-  logo: C.accent,
+  experts: C.accent,
   process: C.light,
   mission: C.navy,
   outro: C.accent,

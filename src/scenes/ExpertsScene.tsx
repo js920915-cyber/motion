@@ -76,7 +76,7 @@ const Gauge: React.FC<{ size: number; count: number; on: boolean }> = ({ size, c
   );
 };
 
-// 05. 전문가 소개: 원형 게이지 100% 카운터 + 자격 리스트
+// 04. 전문가 소개: 원형 게이지 100% 카운터 + 자격 리스트
 export const ExpertsScene: React.FC = () => {
   const frame = useCurrentFrame();
   const count = countAt(frame);

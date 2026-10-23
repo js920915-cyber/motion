@@ -11,7 +11,7 @@ const WORDS: { text: string; icon: IconName }[] = [
   { text: "회복", icon: "heartbeat" },
 ];
 
-// 08. 네이비 픽셀 디더 배경 위로 비트마다 키워드+도형 → 미션 문장
+// 07. 네이비 픽셀 디더 배경 위로 비트마다 키워드+도형 → 미션 문장
 export const MissionScene: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();

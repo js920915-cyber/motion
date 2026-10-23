@@ -12,7 +12,7 @@ const INFO = [
   { k: "CALL", v: "02-6737-6667" },
 ];
 
-// 09. 엔딩: 블루 방사형 하프톤 + 흰 로고 + 연락처 + URL 필
+// 08. 엔딩: 블루 방사형 하프톤 + 흰 로고 + 연락처 + URL 필
 export const OutroScene: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();

@@ -9,7 +9,7 @@ import { BEAT, C, CLAMP, EASE_IN_OUT, EASE_OUT, MONO } from "../theme";
 // 흰 원이 열리는 프레임. 이후 HUD도 밝은 톤으로 바뀝니다(RSportsPromo 의 lightFrom).
 export const LOGO_IRIS = Math.round(1.5 * BEAT);
 
-// 04. 블루 하프톤 동심원 → 흰 원이 열리며 실제 로고 리빌
+// (본편에서 제외, 단독 컴포지션) 블루 하프톤 동심원 → 흰 원이 열리며 실제 로고 리빌
 export const LogoScene: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();

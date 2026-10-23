@@ -57,7 +57,6 @@ export const SCENES = {
   boot: 6 * BEAT,
   pain: 4 * BEAT,
   session: 8 * BEAT,
-  logo: 8 * BEAT,
   experts: 10 * BEAT,
   programs: 12 * BEAT,
   process: 14 * BEAT,
@@ -66,3 +65,6 @@ export const SCENES = {
 } as const;
 
 export const TOTAL = Object.values(SCENES).reduce((a, b) => a + b, 0);
+
+// 본편에서 뺀 로고 장면 길이(Scenes 폴더의 단독 컴포지션으로만 남김)
+export const LOGO_SCENE = 8 * BEAT;

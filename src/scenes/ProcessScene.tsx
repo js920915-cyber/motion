@@ -42,7 +42,7 @@ const StepDot: React.FC<{ i: number; st: number; size: number }> = ({ i, st, siz
   );
 };
 
-// 07. 밝은 톤 전환: 1:1 재활 시스템 4단계 + 실제 사례 4건의 회복 곡선
+// 06. 밝은 톤 전환: 1:1 재활 시스템 4단계 + 실제 사례 4건의 회복 곡선
 export const ProcessScene: React.FC = () => {
   const frame = useCurrentFrame();
   const { w, h, portrait, tall } = useLayout();
