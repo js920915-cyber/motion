@@ -55,7 +55,8 @@ export const CLAMP = {
 // 장면 길이(프레임). 메인 타임라인과 개별 컴포지션이 함께 사용합니다.
 export const SCENES = {
   boot: 6 * BEAT,
-  pain: 8 * BEAT,
+  pain: 4 * BEAT,
+  session: 8 * BEAT,
   logo: 8 * BEAT,
   experts: 10 * BEAT,
   programs: 12 * BEAT,

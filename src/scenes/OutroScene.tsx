@@ -11,7 +11,7 @@ const INFO = [
   { k: "CALL", v: "02-6737-6667" },
 ];
 
-// 08. 엔딩: 블루 방사형 하프톤 + 로고 카드 + 연락처 + URL 필
+// 09. 엔딩: 블루 방사형 하프톤 + 흰 로고 + 연락처 + URL 필
 export const OutroScene: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -36,16 +36,8 @@ export const OutroScene: React.FC = () => {
       <PopShape kind="square" x={290} y={830} size={56} color={C.dim} at={2.5 * BEAT} rotate={15} spin={0.25} />
 
       <div style={{ position: "relative", display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <div
-          style={{
-            scale: pop,
-            background: C.paper,
-            borderRadius: 28,
-            padding: "34px 54px",
-            boxShadow: `0 0 80px ${C.accent}40`,
-          }}
-        >
-          <BrandLogo width={700} />
+        <div style={{ scale: pop }}>
+          <BrandLogo width={820} variant="white" />
         </div>
 
         <Typewriter

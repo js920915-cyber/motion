@@ -6,13 +6,13 @@ import { Sfx } from "../components/Sfx";
 import { CASES } from "../data/cases";
 import { BEAT, C, CLAMP, EASE_OUT, MONO, SANS } from "../theme";
 
-const STEPS = ["정밀 평가 · 3D 분석", "1:1 맞춤 프로그램", "기능 회복", "재발 방지"];
+const STEPS = ["정밀 평가 · 3D 분석", "1:1 맞춤 프로그램", "기능 회복", "부상 예방"];
 const stepAt = (i: number) => Math.round((0.75 + 0.5 * i) * BEAT);
 const cardAt = (i: number) => (3 + i) * BEAT;
 const DRAW = 3 * BEAT;
 const drawAt = (i: number) => cardAt(i) + 4;
 
-// 06. 밝은 톤 전환: 1:1 재활 시스템 4단계 + 실제 사례 4건의 회복 곡선
+// 07. 밝은 톤 전환: 1:1 재활 시스템 4단계 + 실제 사례 4건의 회복 곡선
 export const ProcessScene: React.FC = () => {
   const frame = useCurrentFrame();
 

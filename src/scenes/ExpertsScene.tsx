@@ -9,6 +9,7 @@ const CREDENTIALS: { tag: string; text: string; shape: ShapeKind }[] = [
   { tag: "IOC", text: "올림픽 위원회 인증 스포츠 물리치료사", shape: "circle" },
   { tag: "NSCA", text: "근력·컨디셔닝 전문가 (CSCS)", shape: "triangle" },
   { tag: "TEAM", text: "국가대표 의무트레이너", shape: "square" },
+  { tag: "TEAM", text: "국가대표 피지컬트레이너", shape: "diamond" },
 ];
 
 const GAUGE = 400;
@@ -25,7 +26,7 @@ for (let f = COUNT_FROM + 1; f <= COUNT_TO; f++) {
   if (countAt(f) !== countAt(f - 1) && (TICKS.length === 0 || f - TICKS[TICKS.length - 1] >= 2)) TICKS.push(f);
 }
 
-// 04. 전문가 소개: 원형 게이지 100% 카운터 + 자격 리스트
+// 05. 전문가 소개: 원형 게이지 100% 카운터 + 자격 리스트
 export const ExpertsScene: React.FC = () => {
   const frame = useCurrentFrame();
   const count = countAt(frame);
@@ -98,17 +99,17 @@ export const ExpertsScene: React.FC = () => {
         />
       </div>
 
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 26 }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 22 }}>
         {CREDENTIALS.map((c, i) => {
           const s = (3 + i) * BEAT;
           return (
             <div
-              key={c.tag}
+              key={c.text}
               style={{
                 display: "flex",
                 alignItems: "center",
                 gap: 26,
-                padding: "30px 32px",
+                padding: "26px 32px",
                 background: C.bg2,
                 border: `1px solid ${C.line}`,
                 borderLeft: `4px solid ${C.accent}`,
@@ -135,7 +136,7 @@ export const ExpertsScene: React.FC = () => {
       ))}
       <Sfx name="ding" at={COUNT_TO} volume={0.45} />
       {CREDENTIALS.map((c, i) => (
-        <Sfx key={c.tag} name="blip" at={(3 + i) * BEAT} volume={0.45} />
+        <Sfx key={c.text} name="blip" at={(3 + i) * BEAT} volume={0.45} />
       ))}
     </AbsoluteFill>
   );

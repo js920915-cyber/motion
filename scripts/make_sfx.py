@@ -173,6 +173,20 @@ def riser() -> np.ndarray:
     return norm(fade(s, 3), -5)
 
 
+def shutter() -> np.ndarray:
+    """사진·영상 패널이 열릴 때의 셔터: 짧은 기계음 두 번."""
+    sec = 0.16
+    n = int(SR * sec)
+    x = np.zeros(n)
+    for start, amp in ((0.0, 1.0), (0.045, 0.7)):
+        m = int(SR * 0.03)
+        burst = svf(rng.standard_normal(m), np.full(m, 3200.0), q=1.2) * env(m, 0.0003, 0.006)
+        burst += np.sin(2 * np.pi * 900 * t(0.03)) * env(m, 0.0003, 0.004) * 0.4
+        i = int(SR * start)
+        x[i : i + m] += burst * amp
+    return norm(fade(x, 2), -5)
+
+
 def ding() -> np.ndarray:
     """결과·CTA용 맑은 벨."""
     sec = 1.4
@@ -198,6 +212,7 @@ SOUNDS = {
     "thump": thump,
     "alert": alert,
     "riser": riser,
+    "shutter": shutter,
     "ding": ding,
 }
 

@@ -16,7 +16,7 @@ const PROGRAMS: { ko: string; en: string; shape: ShapeKind }[] = [
   { ko: "기능평가 · 3D분석", en: "3D ANALYSIS", shape: "square" },
 ];
 
-// 05. 프로그램 카드 그리드 — 반 박자마다 한 장씩 등장
+// 06. 프로그램 카드 그리드 — 반 박자마다 한 장씩 등장
 export const ProgramsScene: React.FC = () => {
   const frame = useCurrentFrame();
   const firstCard = 2 * BEAT;

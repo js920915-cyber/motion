@@ -9,6 +9,7 @@ import { OutroScene } from "./scenes/OutroScene";
 import { PainScene } from "./scenes/PainScene";
 import { ProcessScene } from "./scenes/ProcessScene";
 import { ProgramsScene } from "./scenes/ProgramsScene";
+import { SessionScene } from "./scenes/SessionScene";
 import { FPS, SCENES, TOTAL } from "./theme";
 
 export const RemotionRoot: React.FC = () => {
@@ -29,6 +30,7 @@ export const RemotionRoot: React.FC = () => {
       <Folder name="Scenes">
         <Composition id="Boot" component={BootScene} durationInFrames={SCENES.boot} fps={FPS} width={1920} height={1080} />
         <Composition id="Pain" component={PainScene} durationInFrames={SCENES.pain} fps={FPS} width={1920} height={1080} />
+        <Composition id="Session" component={SessionScene} durationInFrames={SCENES.session} fps={FPS} width={1920} height={1080} />
         <Composition id="Logo" component={LogoScene} durationInFrames={SCENES.logo} fps={FPS} width={1920} height={1080} />
         <Composition id="Experts" component={ExpertsScene} durationInFrames={SCENES.experts} fps={FPS} width={1920} height={1080} />
         <Composition id="Programs" component={ProgramsScene} durationInFrames={SCENES.programs} fps={FPS} width={1920} height={1080} />

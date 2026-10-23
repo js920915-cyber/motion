@@ -4,13 +4,13 @@ import { Sfx } from "../components/Sfx";
 import { BEAT, C, CLAMP, EASE_OUT, MONO, SANS } from "../theme";
 
 // 키워드마다 짝이 되는 도형
-const WORDS: { text: string; shape: ShapeKind }[] = [
-  { text: "기능 향상", shape: "triangle" },
-  { text: "회복", shape: "circle" },
-  { text: "재발 방지", shape: "square" },
+const WORDS: { text: string; shape: ShapeKind; color: string }[] = [
+  { text: "부상 예방", shape: "square", color: C.white },
+  { text: "기능 향상", shape: "triangle", color: C.white },
+  { text: "회복", shape: "circle", color: C.red },
 ];
 
-// 07. 네이비 픽셀 디더 배경 위로 비트마다 키워드+도형 → 미션 문장
+// 08. 네이비 픽셀 디더 배경 위로 비트마다 키워드+도형 → 미션 문장
 export const MissionScene: React.FC = () => {
   const frame = useCurrentFrame();
   const { width, height, fps } = useVideoConfig();
@@ -44,7 +44,7 @@ export const MissionScene: React.FC = () => {
             rotate: `${-60 * (1 - hit) + (frame % BEAT) * 0.8}deg`,
           }}
         >
-          <Shape kind={WORDS[idx].shape} size={380} color={idx === 1 ? C.red : C.white} stroke={22} />
+          <Shape kind={WORDS[idx].shape} size={380} color={WORDS[idx].color} stroke={22} />
         </div>
       ) : null}
       <AbsoluteFill style={{ padding: "0 160px", justifyContent: "center" }}>
@@ -61,7 +61,7 @@ export const MissionScene: React.FC = () => {
                       scale: interpolate(frame, [s, s + 8], [0, 1], { ...CLAMP, easing: EASE_OUT }),
                     }}
                   >
-                    <Shape kind={w.shape} size={30} color={i === 1 ? C.red : C.white} stroke={4} />
+                    <Shape kind={w.shape} size={30} color={w.color} stroke={4} />
                   </div>
                 );
               })
@@ -84,7 +84,7 @@ export const MissionScene: React.FC = () => {
         ) : (
           <div style={{ fontFamily: SANS, fontWeight: 900, fontSize: 104, letterSpacing: -4, color: C.white, lineHeight: 1.2, marginTop: 10 }}>
             <div style={{ opacity: interpolate(frame, [finalStart, finalStart + 5], [0, 1], CLAMP) }}>
-              기능 향상 · 회복 · 재발 방지로
+              부상 예방 · 기능 향상 · 회복으로
             </div>
             <div
               style={{

@@ -11,6 +11,7 @@ import { OutroScene } from "./scenes/OutroScene";
 import { PainScene } from "./scenes/PainScene";
 import { ProcessScene } from "./scenes/ProcessScene";
 import { ProgramsScene } from "./scenes/ProgramsScene";
+import { SessionScene } from "./scenes/SessionScene";
 import { C, SCENES } from "./theme";
 
 type Props = { music: boolean };
@@ -19,6 +20,7 @@ type Props = { music: boolean };
 const ORDER = [
   { key: "boot", label: "BOOT", Comp: BootScene, lightFrom: null },
   { key: "pain", label: "PAIN POINT", Comp: PainScene, lightFrom: null },
+  { key: "session", label: "IN SESSION", Comp: SessionScene, lightFrom: null },
   { key: "logo", label: "IDENTITY", Comp: LogoScene, lightFrom: LOGO_IRIS + 6 },
   { key: "experts", label: "EXPERTS", Comp: ExpertsScene, lightFrom: null },
   { key: "programs", label: "PROGRAM", Comp: ProgramsScene, lightFrom: null },
