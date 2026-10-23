@@ -1,19 +1,35 @@
 import { AbsoluteFill, interpolate, useCurrentFrame } from "remotion";
 import { SectionLabel } from "../components/Brand";
+import { PopShape, Shape, ShapeKind } from "../components/Shapes";
+import { Sfx } from "../components/Sfx";
 import { Typewriter } from "../components/Typewriter";
 import { BEAT, C, CLAMP, EASE_OUT, MONO, SANS } from "../theme";
 
-const CREDENTIALS = [
-  { tag: "IOC", text: "국제올림픽위원회 스포츠 물리치료사" },
-  { tag: "NSCA", text: "근력·컨디셔닝 전문가 (CSCS)" },
-  { tag: "前", text: "SNU서울병원 스포츠재활센터 팀장" },
-  { tag: "TEAM", text: "청소년 수구 국가대표팀 피지오 파견" },
+const CREDENTIALS: { tag: string; text: string; shape: ShapeKind }[] = [
+  { tag: "IOC", text: "올림픽 위원회 인증 스포츠 물리치료사", shape: "circle" },
+  { tag: "NSCA", text: "근력·컨디셔닝 전문가 (CSCS)", shape: "triangle" },
+  { tag: "TEAM", text: "국가대표 의무트레이너", shape: "square" },
 ];
 
-// 04. 전문가 소개: 100% 카운터 + 자격 리스트
+const GAUGE = 400;
+const GAUGE_R = 180;
+const COUNT_FROM = BEAT;
+const COUNT_TO = 3 * BEAT;
+
+const countAt = (f: number) =>
+  Math.round(interpolate(f, [COUNT_FROM, COUNT_TO], [0, 100], { ...CLAMP, easing: EASE_OUT }));
+
+// 숫자가 바뀌는 프레임에만(최소 2프레임 간격) 틱 소리
+const TICKS: number[] = [];
+for (let f = COUNT_FROM + 1; f <= COUNT_TO; f++) {
+  if (countAt(f) !== countAt(f - 1) && (TICKS.length === 0 || f - TICKS[TICKS.length - 1] >= 2)) TICKS.push(f);
+}
+
+// 04. 전문가 소개: 원형 게이지 100% 카운터 + 자격 리스트
 export const ExpertsScene: React.FC = () => {
   const frame = useCurrentFrame();
-  const count = Math.round(interpolate(frame, [BEAT, 3 * BEAT], [0, 100], { ...CLAMP, easing: EASE_OUT }));
+  const count = countAt(frame);
+  const circ = 2 * Math.PI * GAUGE_R;
 
   return (
     <AbsoluteFill
@@ -21,27 +37,68 @@ export const ExpertsScene: React.FC = () => {
         backgroundColor: C.bg,
         backgroundImage: `linear-gradient(${C.line} 1px, transparent 1px), linear-gradient(90deg, ${C.line} 1px, transparent 1px)`,
         backgroundSize: "120px 120px",
-        padding: "190px 160px",
+        padding: "150px 150px",
         flexDirection: "row",
         alignItems: "center",
-        gap: 120,
+        gap: 90,
       }}
     >
-      <div style={{ flex: 1 }}>
+      <PopShape kind="plus" x={1790} y={170} size={40} color={C.red} filled at={BEAT} spin={0.5} />
+      <PopShape kind="circle" x={130} y={930} size={70} color={C.accentDim} stroke={5} at={2 * BEAT} />
+
+      <div style={{ width: 640 }}>
         <SectionLabel no="01" text="EXPERTS" />
-        <div style={{ fontFamily: SANS, fontWeight: 900, fontSize: 280, color: C.accent, letterSpacing: -12, lineHeight: 1, marginTop: 30 }}>
-          {count}
-          <span style={{ fontSize: 140 }}>%</span>
+        <div style={{ position: "relative", width: GAUGE, height: GAUGE, marginTop: 34 }}>
+          <svg width={GAUGE} height={GAUGE} style={{ position: "absolute", inset: 0 }}>
+            <circle cx={GAUGE / 2} cy={GAUGE / 2} r={GAUGE_R} fill="none" stroke={C.line} strokeWidth={18} />
+            <circle
+              cx={GAUGE / 2}
+              cy={GAUGE / 2}
+              r={GAUGE_R}
+              fill="none"
+              stroke={C.accent}
+              strokeWidth={18}
+              strokeLinecap="round"
+              strokeDasharray={circ}
+              strokeDashoffset={circ * (1 - count / 100)}
+              transform={`rotate(-90 ${GAUGE / 2} ${GAUGE / 2})`}
+            />
+            {/* 게이지 끝을 따라 도는 레드 점 */}
+            <circle
+              cx={GAUGE / 2 + GAUGE_R * Math.sin((count / 100) * 2 * Math.PI)}
+              cy={GAUGE / 2 - GAUGE_R * Math.cos((count / 100) * 2 * Math.PI)}
+              r={14}
+              fill={C.red}
+              opacity={frame >= COUNT_FROM ? 1 : 0}
+            />
+          </svg>
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              fontFamily: SANS,
+              fontWeight: 900,
+              fontSize: 134,
+              color: C.white,
+              letterSpacing: -6,
+            }}
+          >
+            {count}
+            <span style={{ fontSize: 70, color: C.accent }}>%</span>
+          </div>
         </div>
         <Typewriter
           text="전 직원 물리치료사"
           start={BEAT}
           speed={0.5}
-          style={{ fontFamily: SANS, fontWeight: 900, fontSize: 92, color: C.white, letterSpacing: -3, marginTop: 20 }}
+          style={{ fontFamily: SANS, fontWeight: 900, fontSize: 84, color: C.white, letterSpacing: -3, marginTop: 30 }}
         />
       </div>
 
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 22 }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 26 }}>
         {CREDENTIALS.map((c, i) => {
           const s = (3 + i) * BEAT;
           return (
@@ -50,8 +107,8 @@ export const ExpertsScene: React.FC = () => {
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: 28,
-                padding: "26px 32px",
+                gap: 26,
+                padding: "30px 32px",
                 background: C.bg2,
                 border: `1px solid ${C.line}`,
                 borderLeft: `4px solid ${C.accent}`,
@@ -59,16 +116,27 @@ export const ExpertsScene: React.FC = () => {
                 translate: `${interpolate(frame, [s, s + 10], [80, 0], { ...CLAMP, easing: EASE_OUT })}px 0px`,
               }}
             >
-              <span style={{ fontFamily: MONO, fontWeight: 700, fontSize: 22, color: C.accent, width: 80, letterSpacing: 2 }}>
+              <div style={{ rotate: `${interpolate(frame, [s, s + 12], [-90, 0], { ...CLAMP, easing: EASE_OUT })}deg` }}>
+                <Shape kind={c.shape} size={30} color={i === 0 ? C.red : C.accent} filled />
+              </div>
+              <span style={{ fontFamily: MONO, fontWeight: 700, fontSize: 22, color: C.accent, width: 74, letterSpacing: 2 }}>
                 {c.tag}
               </span>
-              <span style={{ fontFamily: SANS, fontWeight: 700, fontSize: 40, color: C.white, letterSpacing: -1 }}>
+              <span style={{ fontFamily: SANS, fontWeight: 700, fontSize: 38, color: C.white, letterSpacing: -1 }}>
                 {c.text}
               </span>
             </div>
           );
         })}
       </div>
+
+      {TICKS.map((f) => (
+        <Sfx key={f} name="tick" at={f} volume={0.5} />
+      ))}
+      <Sfx name="ding" at={COUNT_TO} volume={0.45} />
+      {CREDENTIALS.map((c, i) => (
+        <Sfx key={c.tag} name="blip" at={(3 + i) * BEAT} volume={0.45} />
+      ))}
     </AbsoluteFill>
   );
 };

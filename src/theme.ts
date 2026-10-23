@@ -17,17 +17,27 @@ for (const weight of ["400", "700"] as const) {
   loadFont({ family: MONO, url: staticFile(`fonts/jetbrains-mono-latin-${weight}-normal.woff2`), weight });
 }
 
-// 브랜드 컬러: 실제 CI 컬러가 있으면 여기만 바꾸면 전체 영상에 반영됩니다.
+// 브랜드 컬러: R스포츠재활센터 로고(public/brand/rsports-logo.png)에서 추출한 네이비·레드 기반.
 export const C = {
-  bg: "#060B09",
-  bg2: "#0C1512",
-  line: "#1C2A24",
-  accent: "#36F09A",
-  accentDim: "#1E8A5A",
-  white: "#F2F5F3",
-  dim: "#6E8279",
-  cream: "#EEEAE0",
-  ink: "#121614",
+  bg: "#050B18",
+  bg2: "#0B1630",
+  line: "#18284D",
+  // 로고 블루를 어두운 배경에서 잘 보이도록 밝힌 색
+  accent: "#3B7FEA",
+  accentDim: "#1F4FB0",
+  // 로고 원색
+  navy: "#0E418B",
+  navyDeep: "#0A2F66",
+  red: "#E7141B",
+  gray: "#595757",
+  white: "#F3F6FB",
+  dim: "#7387AD",
+  // 밝은 장면(시스템·로고) 배경과 글자
+  light: "#EEF2F8",
+  paper: "#FFFFFF",
+  rule: "#D5DDEA",
+  muted: "#5E6B82",
+  ink: "#0B1220",
 };
 
 export const FPS = 30;
@@ -49,7 +59,7 @@ export const SCENES = {
   logo: 8 * BEAT,
   experts: 10 * BEAT,
   programs: 12 * BEAT,
-  process: 10 * BEAT,
+  process: 14 * BEAT,
   mission: 6 * BEAT,
   outro: 10 * BEAT,
 } as const;

@@ -1,5 +1,6 @@
 import { useCurrentFrame } from "remotion";
 import { BEAT, C } from "../theme";
+import { Sfx } from "./Sfx";
 
 type Props = {
   text: string;
@@ -8,16 +9,21 @@ type Props = {
   speed?: number;
   cursorColor?: string;
   hideCursorAfter?: number;
+  // 글자마다 타이핑 효과음
+  sound?: boolean;
   style?: React.CSSProperties;
 };
+
+const KEYS = ["type-1", "type-2", "type-3"] as const;
 
 // 한 글자씩 입력되는 헤드라인 + 깜빡이는 블록 커서
 export const Typewriter: React.FC<Props> = ({
   text,
   start = 0,
   speed = 0.6,
-  cursorColor = C.accent,
+  cursorColor = C.red,
   hideCursorAfter = Infinity,
+  sound = true,
   style,
 }) => {
   const frame = useCurrentFrame();
@@ -41,6 +47,13 @@ export const Typewriter: React.FC<Props> = ({
           opacity: showCursor ? 1 : 0,
         }}
       />
+      {sound
+        ? chars.map((ch, i) =>
+            ch.trim() ? (
+              <Sfx key={i} name={KEYS[i % KEYS.length]} at={start + Math.ceil((i + 1) / speed)} volume={0.55} />
+            ) : null,
+          )
+        : null}
     </div>
   );
 };

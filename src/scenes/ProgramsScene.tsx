@@ -1,17 +1,19 @@
 import { AbsoluteFill, interpolate, useCurrentFrame } from "remotion";
 import { SectionLabel } from "../components/Brand";
+import { Shape, ShapeKind } from "../components/Shapes";
+import { Sfx } from "../components/Sfx";
 import { Typewriter } from "../components/Typewriter";
 import { BEAT, C, CLAMP, EASE_OUT, MONO, SANS } from "../theme";
 
-const PROGRAMS = [
-  { ko: "근력 · 기능 향상", en: "STRENGTH" },
-  { ko: "자세 · 체형 교정", en: "POSTURE" },
-  { ko: "무릎 · 고관절", en: "KNEE / HIP" },
-  { ko: "발 · 발목 통증", en: "FOOT / ANKLE" },
-  { ko: "어깨 · 팔꿈치", en: "SHOULDER / ELBOW" },
-  { ko: "목 · 허리 통증", en: "NECK / BACK" },
-  { ko: "스포츠 재활", en: "SPORTS REHAB" },
-  { ko: "기능평가 · 3D분석", en: "3D ANALYSIS" },
+const PROGRAMS: { ko: string; en: string; shape: ShapeKind }[] = [
+  { ko: "근력 · 기능 향상", en: "STRENGTH", shape: "triangle" },
+  { ko: "자세 · 체형 교정", en: "POSTURE", shape: "square" },
+  { ko: "무릎 · 고관절", en: "KNEE / HIP", shape: "circle" },
+  { ko: "발 · 발목 통증", en: "FOOT / ANKLE", shape: "diamond" },
+  { ko: "어깨 · 팔꿈치", en: "SHOULDER / ELBOW", shape: "arc" },
+  { ko: "목 · 허리 통증", en: "NECK / BACK", shape: "plus" },
+  { ko: "스포츠 재활", en: "SPORTS REHAB", shape: "circle" },
+  { ko: "기능평가 · 3D분석", en: "3D ANALYSIS", shape: "square" },
 ];
 
 // 05. 프로그램 카드 그리드 — 반 박자마다 한 장씩 등장
@@ -21,7 +23,8 @@ export const ProgramsScene: React.FC = () => {
   const step = BEAT / 2;
   // 모든 카드가 나온 뒤 하이라이트가 카드 위를 순서대로 훑음
   const sweepStart = firstCard + PROGRAMS.length * step + BEAT;
-  const active = Math.floor((frame - sweepStart) / (step / 2));
+  const sweepStep = step / 2;
+  const active = Math.floor((frame - sweepStart) / sweepStep);
 
   return (
     <AbsoluteFill style={{ backgroundColor: C.bg, padding: "150px 150px 140px" }}>
@@ -40,6 +43,7 @@ export const ProgramsScene: React.FC = () => {
             <div
               key={p.en}
               style={{
+                position: "relative",
                 height: 230,
                 padding: "28px 30px",
                 display: "flex",
@@ -52,16 +56,34 @@ export const ProgramsScene: React.FC = () => {
               }}
             >
               <div style={{ display: "flex", justifyContent: "space-between", fontFamily: MONO, fontSize: 18, letterSpacing: 2 }}>
-                <span style={{ color: lit ? C.bg : C.accent }}>{String(i + 1).padStart(2, "0")}</span>
-                <span style={{ color: lit ? C.bg : C.dim }}>{p.en}</span>
+                <span style={{ color: lit ? C.white : C.accent }}>{String(i + 1).padStart(2, "0")}</span>
+                <span style={{ color: lit ? C.white : C.dim }}>{p.en}</span>
               </div>
-              <div style={{ fontFamily: SANS, fontWeight: 900, fontSize: 46, letterSpacing: -1.5, color: lit ? C.bg : C.white }}>
+              {/* 카드마다 다른 도형 아이콘 */}
+              <div
+                style={{
+                  position: "absolute",
+                  right: 30,
+                  top: 78,
+                  rotate: `${interpolate(frame, [s, s + 14], [-120, 0], { ...CLAMP, easing: EASE_OUT })}deg`,
+                }}
+              >
+                <Shape kind={p.shape} size={46} color={lit ? C.white : i % 3 === 0 ? C.red : C.accentDim} stroke={5} />
+              </div>
+              <div style={{ fontFamily: SANS, fontWeight: 900, fontSize: 46, letterSpacing: -1.5, color: C.white }}>
                 {p.ko}
               </div>
             </div>
           );
         })}
       </div>
+
+      {PROGRAMS.map((p, i) => (
+        <Sfx key={p.en} name="pop" at={firstCard + i * step} volume={0.35} />
+      ))}
+      {PROGRAMS.map((p, i) => (
+        <Sfx key={`sweep-${p.en}`} name="tick" at={sweepStart + i * sweepStep} volume={0.45} />
+      ))}
     </AbsoluteFill>
   );
 };

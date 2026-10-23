@@ -1,6 +1,18 @@
 import { AbsoluteFill, Interactive, interpolate, useCurrentFrame } from "remotion";
+import { PopShape, Shape } from "../components/Shapes";
+import { Sfx } from "../components/Sfx";
 import { Typewriter } from "../components/Typewriter";
-import { C, CLAMP, EASE_OUT, MONO, SANS } from "../theme";
+import { BEAT, C, CLAMP, EASE_OUT, MONO, SANS } from "../theme";
+
+// 헤드라인 주변에서 비트마다 하나씩 튀어나오는 도형
+const SHAPES = [
+  { kind: "circle", x: 330, y: 270, size: 38, color: C.red, filled: true, at: BEAT },
+  { kind: "triangle", x: 1590, y: 300, size: 74, color: C.accent, at: 1.5 * BEAT, spin: 0.4 },
+  { kind: "plus", x: 300, y: 790, size: 52, color: C.accent, filled: true, at: 2 * BEAT },
+  { kind: "square", x: 1610, y: 790, size: 58, color: C.dim, at: 2.5 * BEAT, rotate: 18, spin: -0.3 },
+  { kind: "diamond", x: 520, y: 180, size: 28, color: C.white, filled: true, at: 3 * BEAT },
+  { kind: "circle", x: 1420, y: 880, size: 22, color: C.red, filled: true, at: 3.5 * BEAT },
+] as const;
 
 // 01. 터미널 부팅 + 타이핑 헤드라인
 export const BootScene: React.FC = () => {
@@ -17,9 +29,26 @@ export const BootScene: React.FC = () => {
         alignItems: "center",
       }}
     >
+      {/* 헤드라인 뒤를 천천히 도는 점선 링 */}
+      <AbsoluteFill style={{ justifyContent: "center", alignItems: "center" }}>
+        <div
+          style={{
+            opacity: interpolate(frame, [0, 12], [0, 0.55], CLAMP),
+            scale: interpolate(frame, [0, 20], [0.85, 1], { ...CLAMP, easing: EASE_OUT }),
+            rotate: `${frame * 0.25}deg`,
+          }}
+        >
+          <Shape kind="circle" size={900} color={C.line} stroke={3} dashed />
+        </div>
+      </AbsoluteFill>
+      {SHAPES.map((s, i) => (
+        <PopShape key={i} {...s} />
+      ))}
+
       <Interactive.Div
         name="Boot label"
         style={{
+          position: "relative",
           fontFamily: MONO,
           fontSize: 22,
           letterSpacing: 6,
@@ -32,13 +61,13 @@ export const BootScene: React.FC = () => {
       </Interactive.Div>
 
       <Typewriter
-        text="다시, 뛸 수 있도록"
+        text="다시, 건강한 일상으로"
         start={10}
         speed={0.45}
-        style={{ fontFamily: SANS, fontWeight: 900, fontSize: 150, color: C.white, letterSpacing: -4 }}
+        style={{ position: "relative", fontFamily: SANS, fontWeight: 900, fontSize: 140, color: C.white, letterSpacing: -4 }}
       />
 
-      <div style={{ width: 640, marginTop: 70 }}>
+      <div style={{ position: "relative", width: 640, marginTop: 70 }}>
         <div style={{ height: 3, background: C.line }}>
           <div style={{ height: 3, width: `${pct}%`, background: C.accent }} />
         </div>
@@ -57,6 +86,11 @@ export const BootScene: React.FC = () => {
           <span style={{ color: C.accent }}>{String(pct).padStart(3, "0")}%</span>
         </div>
       </div>
+
+      <Sfx name="blip-low" at={1} volume={0.7} />
+      {SHAPES.map((s, i) => (
+        <Sfx key={i} name="pop" at={s.at} volume={0.35} />
+      ))}
     </AbsoluteFill>
   );
 };

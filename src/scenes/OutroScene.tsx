@@ -1,6 +1,8 @@
 import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
-import { LogoMark } from "../components/Brand";
+import { BrandLogo } from "../components/Brand";
 import { Halftone } from "../components/Halftone";
+import { PopShape } from "../components/Shapes";
+import { Sfx } from "../components/Sfx";
 import { Typewriter } from "../components/Typewriter";
 import { BEAT, C, CLAMP, EASE_OUT, MONO, SANS } from "../theme";
 
@@ -9,7 +11,7 @@ const INFO = [
   { k: "CALL", v: "02-6737-6667" },
 ];
 
-// 08. 엔딩: 방사형 하프톤 + 로고 + 연락처 + URL 필
+// 08. 엔딩: 블루 방사형 하프톤 + 로고 카드 + 연락처 + URL 필
 export const OutroScene: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -20,6 +22,7 @@ export const OutroScene: React.FC = () => {
       <AbsoluteFill style={{ opacity: 0.55 }}>
         <Halftone
           mode="rays"
+          color={C.accent}
           hole={460}
           speed={0.6}
           reveal={interpolate(frame, [0, 2 * BEAT], [0, 1], { ...CLAMP, easing: EASE_OUT })}
@@ -27,22 +30,32 @@ export const OutroScene: React.FC = () => {
       </AbsoluteFill>
       <AbsoluteFill style={{ background: `radial-gradient(circle at center, ${C.bg} 0, ${C.bg} 420px, transparent 620px)` }} />
 
+      <PopShape kind="circle" x={300} y={260} size={90} color={C.accent} stroke={6} at={BEAT} />
+      <PopShape kind="triangle" x={1640} y={250} size={70} color={C.red} filled at={1.5 * BEAT} spin={0.3} />
+      <PopShape kind="plus" x={1620} y={840} size={48} color={C.white} filled at={2 * BEAT} spin={-0.4} />
+      <PopShape kind="square" x={290} y={830} size={56} color={C.dim} at={2.5 * BEAT} rotate={15} spin={0.25} />
+
       <div style={{ position: "relative", display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 36, scale: pop }}>
-          <LogoMark size={120} />
-          <div style={{ fontFamily: SANS, fontWeight: 900, fontSize: 96, color: C.white, letterSpacing: -4 }}>
-            R스포츠재활센터
-          </div>
+        <div
+          style={{
+            scale: pop,
+            background: C.paper,
+            borderRadius: 28,
+            padding: "34px 54px",
+            boxShadow: `0 0 80px ${C.accent}40`,
+          }}
+        >
+          <BrandLogo width={700} />
         </div>
 
         <Typewriter
-          text="다시, 뛸 수 있도록."
+          text="다시, 건강한 일상으로."
           start={BEAT}
           speed={0.5}
-          style={{ fontFamily: SANS, fontWeight: 700, fontSize: 52, color: C.accent, marginTop: 30, letterSpacing: -1 }}
+          style={{ fontFamily: SANS, fontWeight: 700, fontSize: 52, color: C.white, marginTop: 40, letterSpacing: -1 }}
         />
 
-        <div style={{ marginTop: 50, display: "flex", flexDirection: "column", gap: 14, alignItems: "center" }}>
+        <div style={{ marginTop: 40, display: "flex", flexDirection: "column", gap: 14, alignItems: "center" }}>
           {INFO.map((r, i) => {
             const s = (3 + i) * BEAT;
             return (
@@ -64,11 +77,11 @@ export const OutroScene: React.FC = () => {
 
         <div
           style={{
-            marginTop: 46,
+            marginTop: 42,
             padding: "16px 40px",
             borderRadius: 999,
-            background: C.accent,
-            color: C.bg,
+            background: C.red,
+            color: C.white,
             fontFamily: MONO,
             fontWeight: 700,
             fontSize: 34,
@@ -80,6 +93,16 @@ export const OutroScene: React.FC = () => {
           rsports.co.kr ↗
         </div>
       </div>
+
+      <Sfx name="impact" at={0} volume={0.45} />
+      {[1, 1.5, 2, 2.5].map((b) => (
+        <Sfx key={b} name="pop" at={b * BEAT} volume={0.3} />
+      ))}
+      {INFO.map((r, i) => (
+        <Sfx key={r.k} name="blip" at={(3 + i) * BEAT} volume={0.45} />
+      ))}
+      <Sfx name="pop" at={5 * BEAT} volume={0.6} />
+      <Sfx name="ding" at={5 * BEAT + 2} volume={0.55} />
     </AbsoluteFill>
   );
 };

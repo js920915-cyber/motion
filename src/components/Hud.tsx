@@ -33,7 +33,8 @@ export const Hud: React.FC<Props> = ({ scene, index, light = false }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const fg = light ? C.ink : C.white;
-  const dim = light ? "#8A8A80" : C.dim;
+  const dim = light ? C.muted : C.dim;
+  const on = light ? C.navy : C.accent;
   const sec = Math.floor(frame / fps);
   const tc = `00:${pad(Math.floor(sec / 60))}:${pad(sec % 60)}:${pad(frame % fps)}`;
   const beat = (Math.floor(frame / BEAT) % 4) + 1;
@@ -71,8 +72,8 @@ export const Hud: React.FC<Props> = ({ scene, index, light = false }) => {
             style={{
               width: 10,
               height: 10,
-              background: b === beat ? C.accent : "transparent",
-              border: `1px solid ${b === beat ? C.accent : dim}`,
+              background: b === beat ? on : "transparent",
+              border: `1px solid ${b === beat ? on : dim}`,
             }}
           />
         ))}

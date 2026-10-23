@@ -1,31 +1,18 @@
-import { C, MONO, SANS } from "../theme";
+import { CanvasImage, staticFile } from "remotion";
+import { C, MONO } from "../theme";
 
-// 임시 로고 마크. 실제 로고가 있으면 public/logo.png 로 넣고 <Img>로 교체하세요.
-export const LogoMark: React.FC<{ size?: number; color?: string; ink?: string }> = ({
-  size = 140,
-  color = C.accent,
-  ink = C.bg,
-}) => (
-  <div
-    style={{
-      width: size,
-      height: size,
-      borderRadius: size * 0.28,
-      background: color,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      fontFamily: SANS,
-      fontWeight: 900,
-      fontSize: size * 0.68,
-      color: ink,
-      letterSpacing: -2,
-      lineHeight: 1,
-      boxShadow: `0 0 ${size * 0.5}px ${color}55`,
-    }}
-  >
-    R
-  </div>
+// 실제 로고. 원본(public/brand/rsports-logo.png)의 여백을 잘라내고 4배로 키운 파일입니다.
+// 고해상도 원본(AI·SVG)이 생기면 이 파일만 교체하세요.
+const LOGO_W = 1944;
+const LOGO_H = 436;
+
+export const BrandLogo: React.FC<{ width: number; style?: React.CSSProperties }> = ({ width, style }) => (
+  <CanvasImage
+    src={staticFile("brand/rsports-logo-4x.png")}
+    width={Math.round(width)}
+    height={Math.round((width * LOGO_H) / LOGO_W)}
+    style={{ display: "block", ...style }}
+  />
 );
 
 // "01 / EXPERTS" 형태의 섹션 라벨
