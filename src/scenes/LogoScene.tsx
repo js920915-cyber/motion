@@ -1,7 +1,7 @@
 import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import { BrandLogo } from "../components/Brand";
 import { Halftone } from "../components/Halftone";
-import { PopShape } from "../components/Shapes";
+import { PopIcon } from "../components/Icons";
 import { Sfx } from "../components/Sfx";
 import { useLayout } from "../layout";
 import { BEAT, C, CLAMP, EASE_IN_OUT, EASE_OUT, MONO } from "../theme";
@@ -38,12 +38,13 @@ export const LogoScene: React.FC = () => {
           <Halftone mode="rings" color="#DCE5F4" background={C.paper} hole={portrait ? logoW / 2 + 60 : 560} speed={1.2} />
         </AbsoluteFill>
 
-        <PopShape kind="triangle" x={0.245 * w} y={0.306 * h} size={84} color={C.red} filled at={3 * BEAT} rotate={-12} spin={0.25} />
-        <PopShape kind="circle" x={0.771 * w} y={0.278 * h} size={120} color={C.navy} stroke={8} at={3 * BEAT + 3} />
-        <PopShape kind="plus" x={0.781 * w} y={0.731 * h} size={58} color={C.navy} filled at={3.5 * BEAT} spin={-0.4} />
-        <PopShape kind="square" x={0.224 * w} y={0.713 * h} size={56} color={C.navy} at={3.5 * BEAT + 3} rotate={15} spin={0.3} />
-        <PopShape kind="circle" x={0.3125 * w} y={0.796 * h} size={20} color={C.red} filled at={4 * BEAT} />
-        <PopShape kind="diamond" x={0.693 * w} y={0.176 * h} size={26} color={C.red} filled at={4 * BEAT + 3} />
+        {/* 센터 프로그램을 나타내는 컬러 아이콘 */}
+        <PopIcon name="running" x={0.245 * w} y={0.306 * h} size={120} at={3 * BEAT} />
+        <PopIcon name="heart" x={0.771 * w} y={0.278 * h} size={110} at={3 * BEAT + 3} />
+        <PopIcon name="lifting" x={0.781 * w} y={0.731 * h} size={116} at={3.5 * BEAT} />
+        <PopIcon name="leg" x={0.224 * w} y={0.713 * h} size={104} at={3.5 * BEAT + 3} />
+        <PopIcon name="sparkles" x={0.3125 * w} y={0.796 * h} size={56} at={4 * BEAT} />
+        <PopIcon name="medal" x={0.693 * w} y={0.176 * h} size={84} at={4 * BEAT + 3} />
 
         <AbsoluteFill style={{ justifyContent: "center", alignItems: "center", gap: 46 }}>
           <div style={{ scale: pop, opacity: frame >= 2 * BEAT ? 1 : 0 }}>

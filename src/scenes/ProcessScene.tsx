@@ -1,7 +1,7 @@
 import { AbsoluteFill, interpolate, useCurrentFrame } from "remotion";
 import { SectionLabel } from "../components/Brand";
 import { CaseCard } from "../components/CaseCard";
-import { Shape } from "../components/Shapes";
+import { Icon } from "../components/Icons";
 import { Sfx } from "../components/Sfx";
 import { CASES } from "../data/cases";
 import { useLayout } from "../layout";
@@ -66,9 +66,7 @@ export const ProcessScene: React.FC = () => {
         translate: `${interpolate(frame, [cardAt(0), cardAt(0) + 12], [40, 0], { ...CLAMP, easing: EASE_OUT })}px 0px`,
       }}
     >
-      <div style={{ rotate: `${90 + frame * 0.5}deg` }}>
-        <Shape kind="triangle" size={26} color={C.red} filled />
-      </div>
+      <Icon name="chart" size={40} />
       실제 사례로 보는 회복 곡선
     </div>
   );

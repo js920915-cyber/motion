@@ -1,7 +1,7 @@
 import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import { BrandLogo } from "../components/Brand";
 import { Halftone } from "../components/Halftone";
-import { PopShape } from "../components/Shapes";
+import { PopIcon } from "../components/Icons";
 import { Sfx } from "../components/Sfx";
 import { Typewriter } from "../components/Typewriter";
 import { useLayout } from "../layout";
@@ -33,10 +33,10 @@ export const OutroScene: React.FC = () => {
       </AbsoluteFill>
       <AbsoluteFill style={{ background: `radial-gradient(circle at center, ${C.bg} 0, ${C.bg} ${hole - 40}px, transparent ${hole + 160}px)` }} />
 
-      <PopShape kind="circle" x={0.156 * w} y={0.241 * h} size={90} color={C.accent} stroke={6} at={BEAT} />
-      <PopShape kind="triangle" x={0.854 * w} y={0.231 * h} size={70} color={C.red} filled at={1.5 * BEAT} spin={0.3} />
-      <PopShape kind="plus" x={0.844 * w} y={0.778 * h} size={48} color={C.white} filled at={2 * BEAT} spin={-0.4} />
-      <PopShape kind="square" x={0.151 * w} y={0.769 * h} size={56} color={C.dim} at={2.5 * BEAT} rotate={15} spin={0.25} />
+      <PopIcon name="mending" x={0.156 * w} y={0.241 * h} size={100} at={BEAT} />
+      <PopIcon name="running" x={0.854 * w} y={0.231 * h} size={104} at={1.5 * BEAT} />
+      <PopIcon name="sparkles" x={0.844 * w} y={0.778 * h} size={58} at={2 * BEAT} />
+      <PopIcon name="lifting" x={0.151 * w} y={0.769 * h} size={100} at={2.5 * BEAT} />
 
       <div style={{ position: "relative", display: "flex", flexDirection: "column", alignItems: "center" }}>
         <div style={{ scale: pop }}>

@@ -1,18 +1,19 @@
 import { AbsoluteFill, Interactive, interpolate, useCurrentFrame } from "remotion";
-import { PopShape, Shape } from "../components/Shapes";
+import { PopIcon } from "../components/Icons";
+import { Shape } from "../components/Shapes";
 import { Sfx } from "../components/Sfx";
 import { Typewriter } from "../components/Typewriter";
 import { useLayout } from "../layout";
 import { BEAT, C, CLAMP, EASE_OUT, MONO, SANS } from "../theme";
 
-// 헤드라인 주변에서 비트마다 하나씩 튀어나오는 도형(위치는 화면 비율)
-const SHAPES = [
-  { kind: "circle", fx: 0.172, fy: 0.25, size: 38, color: C.red, filled: true, at: BEAT },
-  { kind: "triangle", fx: 0.828, fy: 0.278, size: 74, color: C.accent, at: 1.5 * BEAT, spin: 0.4 },
-  { kind: "plus", fx: 0.156, fy: 0.731, size: 52, color: C.accent, filled: true, at: 2 * BEAT },
-  { kind: "square", fx: 0.839, fy: 0.731, size: 58, color: C.dim, at: 2.5 * BEAT, rotate: 18, spin: -0.3 },
-  { kind: "diamond", fx: 0.271, fy: 0.167, size: 28, color: C.white, filled: true, at: 3 * BEAT },
-  { kind: "circle", fx: 0.74, fy: 0.815, size: 22, color: C.red, filled: true, at: 3.5 * BEAT },
+// 헤드라인 주변에서 비트마다 하나씩 튀어나오는 컬러 아이콘(위치는 화면 비율)
+const ICONS = [
+  { name: "bandage", fx: 0.172, fy: 0.25, size: 64, at: BEAT, rotate: -12 },
+  { name: "running", fx: 0.828, fy: 0.278, size: 104, at: 1.5 * BEAT },
+  { name: "heart", fx: 0.156, fy: 0.731, size: 92, at: 2 * BEAT },
+  { name: "lifting", fx: 0.839, fy: 0.731, size: 100, at: 2.5 * BEAT },
+  { name: "sparkles", fx: 0.271, fy: 0.167, size: 52, at: 3 * BEAT },
+  { name: "shoe", fx: 0.74, fy: 0.815, size: 70, at: 3.5 * BEAT, rotate: -8 },
 ] as const;
 
 // 01. 터미널 부팅 + 타이핑 헤드라인
@@ -43,8 +44,8 @@ export const BootScene: React.FC = () => {
           <Shape kind="circle" size={900} color={C.line} stroke={3} dashed />
         </div>
       </AbsoluteFill>
-      {SHAPES.map(({ fx, fy, ...s }, i) => (
-        <PopShape key={i} x={fx * w} y={fy * h} {...s} />
+      {ICONS.map(({ fx, fy, ...s }, i) => (
+        <PopIcon key={i} x={fx * w} y={fy * h} {...s} />
       ))}
 
       <Interactive.Div
@@ -99,7 +100,7 @@ export const BootScene: React.FC = () => {
       </div>
 
       <Sfx name="blip-low" at={1} volume={0.7} />
-      {SHAPES.map((s, i) => (
+      {ICONS.map((s, i) => (
         <Sfx key={i} name="pop" at={s.at} volume={0.35} />
       ))}
     </AbsoluteFill>

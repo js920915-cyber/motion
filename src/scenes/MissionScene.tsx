@@ -1,14 +1,14 @@
 import { AbsoluteFill, interpolate, random, spring, useCurrentFrame, useVideoConfig } from "remotion";
-import { Shape, ShapeKind } from "../components/Shapes";
+import { Icon, IconName } from "../components/Icons";
 import { Sfx } from "../components/Sfx";
 import { useLayout } from "../layout";
 import { BEAT, C, CLAMP, EASE_OUT, MONO, SANS } from "../theme";
 
-// 키워드마다 짝이 되는 도형
-const WORDS: { text: string; shape: ShapeKind; color: string }[] = [
-  { text: "부상 예방", shape: "square", color: C.white },
-  { text: "기능 향상", shape: "triangle", color: C.white },
-  { text: "회복", shape: "circle", color: C.red },
+// 키워드마다 짝이 되는 아이콘(방패: 예방, 상승 그래프: 향상, 붕대 감은 하트: 회복)
+const WORDS: { text: string; icon: IconName }[] = [
+  { text: "부상 예방", icon: "shield" },
+  { text: "기능 향상", icon: "chart" },
+  { text: "회복", icon: "mending" },
 ];
 
 // 08. 네이비 픽셀 디더 배경 위로 비트마다 키워드+도형 → 미션 문장
@@ -38,17 +38,17 @@ export const MissionScene: React.FC = () => {
     <AbsoluteFill style={{ backgroundColor: C.navy }}>
       {blocks}
       {frame < finalStart ? (
-        // 키워드와 함께 큰 도형(가로: 오른쪽, 세로: 아래쪽)
+        // 키워드와 함께 큰 아이콘(가로: 오른쪽, 세로: 아래쪽)
         <div
           style={{
             position: "absolute",
             left: portrait ? width / 2 - shapeSize / 2 : 1180,
             top: portrait ? height * (tall ? 0.62 : 0.66) - shapeSize / 2 : 540 - 190,
             scale: hit,
-            rotate: `${-60 * (1 - hit) + (frame % BEAT) * 0.8}deg`,
+            rotate: `${-15 * (1 - hit)}deg`,
           }}
         >
-          <Shape kind={WORDS[idx].shape} size={shapeSize} color={WORDS[idx].color} stroke={portrait ? 18 : 22} />
+          <Icon name={WORDS[idx].icon} size={shapeSize} />
         </div>
       ) : null}
       <AbsoluteFill
@@ -71,7 +71,7 @@ export const MissionScene: React.FC = () => {
                       scale: interpolate(frame, [s, s + 8], [0, 1], { ...CLAMP, easing: EASE_OUT }),
                     }}
                   >
-                    <Shape kind={w.shape} size={30} color={w.color} stroke={4} />
+                    <Icon name={w.icon} size={40} />
                   </div>
                 );
               })

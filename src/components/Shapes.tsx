@@ -1,5 +1,3 @@
-import { spring, useCurrentFrame, useVideoConfig } from "remotion";
-
 export type ShapeKind = "circle" | "triangle" | "square" | "diamond" | "plus" | "arc";
 
 type ShapeProps = {
@@ -54,40 +52,5 @@ export const Shape: React.FC<ShapeProps> = ({ kind, size, color, filled = false,
     <svg width={size} height={size} viewBox="0 0 100 100" style={{ overflow: "visible", display: "block", ...style }}>
       {el}
     </svg>
-  );
-};
-
-type PopProps = ShapeProps & {
-  // 도형 중심 좌표
-  x: number;
-  y: number;
-  // 튀어나오는 프레임
-  at: number;
-  rotate?: number;
-  // 프레임당 회전(도)
-  spin?: number;
-  opacity?: number;
-};
-
-// 지정한 프레임에 스프링으로 튀어나와 천천히 도는 장식 도형
-export const PopShape: React.FC<PopProps> = ({ x, y, at, rotate = 0, spin = 0, opacity = 1, ...shape }) => {
-  const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-  if (frame < at) return null;
-  const p = spring({ frame: frame - at, fps, config: { damping: 11, stiffness: 170 } });
-
-  return (
-    <div
-      style={{
-        position: "absolute",
-        left: x - shape.size / 2,
-        top: y - shape.size / 2,
-        opacity,
-        scale: p,
-        rotate: `${rotate - 90 * (1 - p) + spin * (frame - at)}deg`,
-      }}
-    >
-      <Shape {...shape} />
-    </div>
   );
 };

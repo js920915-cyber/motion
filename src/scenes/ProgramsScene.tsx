@@ -1,20 +1,20 @@
 import { AbsoluteFill, interpolate, useCurrentFrame } from "remotion";
 import { SectionLabel } from "../components/Brand";
-import { Shape, ShapeKind } from "../components/Shapes";
+import { Icon, IconName } from "../components/Icons";
 import { Sfx } from "../components/Sfx";
 import { Typewriter } from "../components/Typewriter";
 import { useLayout } from "../layout";
 import { BEAT, C, CLAMP, EASE_OUT, MONO, SANS } from "../theme";
 
-const PROGRAMS: { ko: string; en: string; shape: ShapeKind }[] = [
-  { ko: "근력 · 기능 향상", en: "STRENGTH", shape: "triangle" },
-  { ko: "자세 · 체형 교정", en: "POSTURE", shape: "square" },
-  { ko: "무릎 · 고관절", en: "KNEE / HIP", shape: "circle" },
-  { ko: "발 · 발목 통증", en: "FOOT / ANKLE", shape: "diamond" },
-  { ko: "어깨 · 팔꿈치", en: "SHOULDER / ELBOW", shape: "arc" },
-  { ko: "목 · 허리 통증", en: "NECK / BACK", shape: "plus" },
-  { ko: "스포츠 재활", en: "SPORTS REHAB", shape: "circle" },
-  { ko: "기능평가 · 3D분석", en: "3D ANALYSIS", shape: "square" },
+const PROGRAMS: { ko: string; en: string; icon: IconName }[] = [
+  { ko: "근력 · 기능 향상", en: "STRENGTH", icon: "lifting" },
+  { ko: "자세 · 체형 교정", en: "POSTURE", icon: "lotus" },
+  { ko: "무릎 · 고관절", en: "KNEE / HIP", icon: "leg" },
+  { ko: "발 · 발목 통증", en: "FOOT / ANKLE", icon: "foot" },
+  { ko: "어깨 · 팔꿈치", en: "SHOULDER / ELBOW", icon: "biceps" },
+  { ko: "목 · 허리 통증", en: "NECK / BACK", icon: "massage" },
+  { ko: "스포츠 재활", en: "SPORTS REHAB", icon: "running" },
+  { ko: "기능평가 · 3D분석", en: "3D ANALYSIS", icon: "xray" },
 ];
 
 // 06. 프로그램 카드 그리드 — 반 박자마다 한 장씩 등장
@@ -76,16 +76,16 @@ export const ProgramsScene: React.FC = () => {
                 <span style={{ color: lit ? C.white : C.accent }}>{String(i + 1).padStart(2, "0")}</span>
                 <span style={{ color: lit ? C.white : C.dim }}>{p.en}</span>
               </div>
-              {/* 카드마다 다른 도형 아이콘 */}
+              {/* 카드 내용을 나타내는 컬러 아이콘 */}
               <div
                 style={{
                   position: "absolute",
-                  right: portrait && !tall ? 26 : 30,
-                  top: portrait && !tall ? 56 : 78,
-                  rotate: `${interpolate(frame, [s, s + 14], [-120, 0], { ...CLAMP, easing: EASE_OUT })}deg`,
+                  right: portrait && !tall ? 22 : 26,
+                  top: portrait && !tall ? 44 : 58,
+                  scale: interpolate(frame, [s, s + 12], [0.4, 1], { ...CLAMP, easing: EASE_OUT }),
                 }}
               >
-                <Shape kind={p.shape} size={portrait && !tall ? 38 : 46} color={lit ? C.white : i % 3 === 0 ? C.red : C.accentDim} stroke={5} />
+                <Icon name={p.icon} size={portrait ? (tall ? 76 : 60) : 88} />
               </div>
               <div style={{ fontFamily: SANS, fontWeight: 900, fontSize: portrait ? (tall ? 42 : 38) : 46, letterSpacing: -1.5, color: C.white }}>
                 {p.ko}

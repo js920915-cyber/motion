@@ -1,16 +1,16 @@
 import { AbsoluteFill, interpolate, useCurrentFrame } from "remotion";
 import { SectionLabel } from "../components/Brand";
-import { PopShape, Shape, ShapeKind } from "../components/Shapes";
+import { Icon, IconName, PopIcon } from "../components/Icons";
 import { Sfx } from "../components/Sfx";
 import { Typewriter } from "../components/Typewriter";
 import { useLayout } from "../layout";
 import { BEAT, C, CLAMP, EASE_OUT, MONO, SANS } from "../theme";
 
-const CREDENTIALS: { tag: string; text: string; shape: ShapeKind }[] = [
-  { tag: "IOC", text: "올림픽 위원회 인증 스포츠 물리치료사", shape: "circle" },
-  { tag: "NSCA", text: "근력·컨디셔닝 전문가 (CSCS)", shape: "triangle" },
-  { tag: "TEAM", text: "국가대표 의무트레이너", shape: "square" },
-  { tag: "TEAM", text: "국가대표 피지컬트레이너", shape: "diamond" },
+const CREDENTIALS: { tag: string; text: string; icon: IconName }[] = [
+  { tag: "IOC", text: "올림픽 위원회 인증 스포츠 물리치료사", icon: "medal" },
+  { tag: "NSCA", text: "근력·컨디셔닝 전문가 (CSCS)", icon: "lifting" },
+  { tag: "TEAM", text: "국가대표 의무트레이너", icon: "stethoscope" },
+  { tag: "TEAM", text: "국가대표 피지컬트레이너", icon: "stopwatch" },
 ];
 
 const COUNT_FROM = BEAT;
@@ -103,8 +103,8 @@ export const ExpertsScene: React.FC = () => {
         gap: portrait ? (tall ? 70 : 44) : 90,
       }}
     >
-      <PopShape kind="plus" x={0.932 * w} y={0.157 * h} size={40} color={C.red} filled at={BEAT} spin={0.5} />
-      <PopShape kind="circle" x={0.068 * w} y={0.861 * h} size={70} color={C.accentDim} stroke={5} at={2 * BEAT} />
+      <PopIcon name="sparkles" x={0.932 * w} y={0.157 * h} size={56} at={BEAT} />
+      <PopIcon name="medal" x={0.068 * w} y={0.861 * h} size={86} at={2 * BEAT} />
 
       {portrait ? (
         // 세로: 게이지 옆에 라벨과 제목
@@ -143,8 +143,8 @@ export const ExpertsScene: React.FC = () => {
                 translate: `${interpolate(frame, [s, s + 10], [80, 0], { ...CLAMP, easing: EASE_OUT })}px 0px`,
               }}
             >
-              <div style={{ rotate: `${interpolate(frame, [s, s + 12], [-90, 0], { ...CLAMP, easing: EASE_OUT })}deg` }}>
-                <Shape kind={c.shape} size={30} color={i === 0 ? C.red : C.accent} filled />
+              <div style={{ scale: interpolate(frame, [s, s + 12], [0.3, 1], { ...CLAMP, easing: EASE_OUT }) }}>
+                <Icon name={c.icon} size={46} />
               </div>
               <span style={{ fontFamily: MONO, fontWeight: 700, fontSize: 22, color: C.accent, width: 74, letterSpacing: 2 }}>
                 {c.tag}

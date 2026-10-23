@@ -15,6 +15,20 @@ const PANELS = [
 const GAP = 22;
 const panelAt = (i: number) => Math.round(2 + (i * BEAT) / 2);
 
+// 사진 칸 전용: 비트마다 '툭' 끊어서 다가가는 줌 + 좌우로 살짝 기울기 + 짧은 플래시
+// t 는 칸이 열린 뒤 지난 프레임. 첫 박은 등장 연출에 맡기고 다음 박부터 7%씩 다가갑니다.
+const PHOTO_FOCUS = "45% 30%";
+const punch = (t: number) => {
+  const k = Math.floor(Math.max(0, t) / BEAT);
+  const e = interpolate(t - k * BEAT, [0, 6], [0, 1], { ...CLAMP, easing: EASE_OUT });
+  const tilt = (n: number) => (n === 0 ? 0 : n % 2 ? -0.8 : 0.8);
+  return {
+    zoom: k === 0 ? 1 : 1 + 0.07 * (k - 1 + e),
+    rotate: k === 0 ? 0 : tilt(k - 1) + (tilt(k) - tilt(k - 1)) * e,
+    flash: k === 0 ? 0 : interpolate(t - k * BEAT, [0, 4], [0.22, 0], CLAMP),
+  };
+};
+
 const Corner: React.FC<{ pos: "tl" | "tr" | "bl" | "br" }> = ({ pos }) => {
   const top = pos[0] === "t";
   const left = pos[1] === "l";
@@ -85,15 +99,20 @@ export const SessionScene: React.FC = () => {
                 }}
               >
                 {p.kind === "image" ? (
-                  <Img
-                    src={staticFile(p.src)}
-                    style={{
-                      width: W,
-                      height: H,
-                      objectFit: "cover",
-                      scale: interpolate(frame, [s, s + 8 * BEAT], [1, 1.08], CLAMP),
-                    }}
-                  />
+                  <>
+                    <Img
+                      src={staticFile(p.src)}
+                      style={{
+                        width: W,
+                        height: H,
+                        objectFit: "cover",
+                        transformOrigin: PHOTO_FOCUS,
+                        scale: punch(frame - s).zoom,
+                        rotate: `${punch(frame - s).rotate}deg`,
+                      }}
+                    />
+                    <div style={{ position: "absolute", inset: 0, background: C.white, opacity: punch(frame - s).flash }} />
+                  </>
                 ) : (
                   <Sequence from={s} layout="none">
                     <Video src={staticFile(p.src)} muted objectFit="cover" style={{ width: W, height: H }} />
