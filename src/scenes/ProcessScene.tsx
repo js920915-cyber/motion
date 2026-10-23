@@ -119,14 +119,36 @@ export const ProcessScene: React.FC = () => {
       </div>
 
       {portrait ? (
-        // 세로: 4단계를 2x2 칩으로
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px 20px", marginTop: 26 }}>
+        // 세로: 4단계를 2x2 알약 모양으로, 아래 사례 카드 열과 같은 폭·같은 가운데에 맞춤
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: `12px ${24 * gridScale}px`,
+            width: Math.max(GRID_W * gridScale, tall ? 0 : 640),
+            alignSelf: "center",
+            marginTop: 26,
+          }}
+        >
           {STEPS.map((s, i) => {
             const st = stepAt(i);
             return (
-              <div key={s} style={{ display: "flex", alignItems: "center", gap: 12, opacity: interpolate(frame, [st, st + 4], [0, 1], CLAMP) }}>
-                <StepDot i={i} st={st} size={44} />
-                <span style={{ fontFamily: SANS, fontWeight: 700, fontSize: 26, color: C.ink, letterSpacing: -0.5 }}>{s}</span>
+              <div
+                key={s}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 10,
+                  padding: "7px 16px 7px 8px",
+                  background: C.paper,
+                  border: `1px solid ${C.rule}`,
+                  borderRadius: 999,
+                  opacity: interpolate(frame, [st, st + 4], [0, 1], CLAMP),
+                }}
+              >
+                <StepDot i={i} st={st} size={tall ? 40 : 34} />
+                <span style={{ fontFamily: SANS, fontWeight: 700, fontSize: tall ? 24 : 21, color: C.ink, letterSpacing: -0.5 }}>{s}</span>
               </div>
             );
           })}

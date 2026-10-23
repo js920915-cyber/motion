@@ -96,7 +96,7 @@ export const MissionScene: React.FC = () => {
             style={{
               fontFamily: SANS,
               fontWeight: 900,
-              fontSize: portrait ? (tall ? 112 : 92) : 104,
+              fontSize: portrait ? (tall ? 104 : 96) : 104,
               letterSpacing: -4,
               color: C.white,
               lineHeight: 1.2,
@@ -104,7 +104,7 @@ export const MissionScene: React.FC = () => {
             }}
           >
             <div style={{ whiteSpace: "pre-line", opacity: interpolate(frame, [finalStart, finalStart + 5], [0, 1], CLAMP) }}>
-              {portrait ? "부상 예방 ·\n기능 향상 ·\n회복으로" : "부상 예방 · 기능 향상 · 회복으로"}
+              {portrait ? "부상 예방 · 기능 향상 ·\n회복으로" : "부상 예방 · 기능 향상 · 회복으로"}
             </div>
             <div
               style={{
@@ -112,7 +112,7 @@ export const MissionScene: React.FC = () => {
                 translate: `0px ${interpolate(frame, [finalStart + BEAT, finalStart + BEAT + 10], [40, 0], { ...CLAMP, easing: EASE_OUT })}px`,
               }}
             >
-              <span style={{ background: C.red, color: C.white, padding: "0 18px" }}>삶의 질</span>을{portrait ? <br /> : " "}높입니다.
+              <span style={{ background: C.red, color: C.white, padding: "0 18px" }}>삶의 질</span>을 높입니다.
             </div>
           </div>
         )}
