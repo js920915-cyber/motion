@@ -77,7 +77,7 @@ export const RSportsPromo: React.FC<Props> = ({ music }) => {
         );
       })}
 
-      {music ? <Audio src={staticFile("bgm.wav")} volume={0.7} /> : null}
+      {music ? <Audio src={staticFile("bgm.wav")} volume={0.32} /> : null}
     </AbsoluteFill>
   );
 };
