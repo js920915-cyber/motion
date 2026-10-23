@@ -4,11 +4,11 @@ import { Sfx } from "../components/Sfx";
 import { useLayout } from "../layout";
 import { BEAT, C, CLAMP, EASE_OUT, MONO, SANS } from "../theme";
 
-// 키워드마다 짝이 되는 아이콘(방패: 예방, 상승 그래프: 향상, 붕대 감은 하트: 회복)
+// 키워드마다 짝이 되는 아이콘(십자 방패: 예방, 상승 화살표: 향상, 심장 박동: 회복)
 const WORDS: { text: string; icon: IconName }[] = [
-  { text: "부상 예방", icon: "shield" },
-  { text: "기능 향상", icon: "chart" },
-  { text: "회복", icon: "mending" },
+  { text: "부상 예방", icon: "healthShield" },
+  { text: "기능 향상", icon: "trendUp" },
+  { text: "회복", icon: "heartbeat" },
 ];
 
 // 08. 네이비 픽셀 디더 배경 위로 비트마다 키워드+도형 → 미션 문장
@@ -48,7 +48,7 @@ export const MissionScene: React.FC = () => {
             rotate: `${-15 * (1 - hit)}deg`,
           }}
         >
-          <Icon name={WORDS[idx].icon} size={shapeSize} />
+          <Icon name={WORDS[idx].icon} size={shapeSize} color={C.white} />
         </div>
       ) : null}
       <AbsoluteFill
@@ -71,7 +71,7 @@ export const MissionScene: React.FC = () => {
                       scale: interpolate(frame, [s, s + 8], [0, 1], { ...CLAMP, easing: EASE_OUT }),
                     }}
                   >
-                    <Icon name={w.icon} size={40} />
+                    <Icon name={w.icon} size={34} color={C.white} />
                   </div>
                 );
               })

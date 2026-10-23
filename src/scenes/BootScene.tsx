@@ -6,14 +6,14 @@ import { Typewriter } from "../components/Typewriter";
 import { useLayout } from "../layout";
 import { BEAT, C, CLAMP, EASE_OUT, MONO, SANS } from "../theme";
 
-// 헤드라인 주변에서 비트마다 하나씩 튀어나오는 컬러 아이콘(위치는 화면 비율)
+// 헤드라인 주변에서 비트마다 하나씩 튀어나오는 의료·재활 아이콘(위치는 화면 비율)
 const ICONS = [
-  { name: "bandage", fx: 0.172, fy: 0.25, size: 64, at: BEAT, rotate: -12 },
-  { name: "running", fx: 0.828, fy: 0.278, size: 104, at: 1.5 * BEAT },
-  { name: "heart", fx: 0.156, fy: 0.731, size: 92, at: 2 * BEAT },
-  { name: "lifting", fx: 0.839, fy: 0.731, size: 100, at: 2.5 * BEAT },
-  { name: "sparkles", fx: 0.271, fy: 0.167, size: 52, at: 3 * BEAT },
-  { name: "shoe", fx: 0.74, fy: 0.815, size: 70, at: 3.5 * BEAT, rotate: -8 },
+  { name: "firstAid", fx: 0.172, fy: 0.25, size: 40, color: C.red, at: BEAT },
+  { name: "running", fx: 0.828, fy: 0.278, size: 96, color: C.accent, at: 1.5 * BEAT },
+  { name: "heartbeat", fx: 0.156, fy: 0.731, size: 80, color: C.red, at: 2 * BEAT },
+  { name: "weights", fx: 0.839, fy: 0.731, size: 90, color: C.accent, at: 2.5 * BEAT },
+  { name: "spine", fx: 0.271, fy: 0.167, size: 56, color: C.dim, at: 3 * BEAT },
+  { name: "firstAid", fx: 0.74, fy: 0.815, size: 30, color: C.red, at: 3.5 * BEAT },
 ] as const;
 
 // 01. 터미널 부팅 + 타이핑 헤드라인

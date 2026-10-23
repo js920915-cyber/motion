@@ -33,10 +33,10 @@ export const OutroScene: React.FC = () => {
       </AbsoluteFill>
       <AbsoluteFill style={{ background: `radial-gradient(circle at center, ${C.bg} 0, ${C.bg} ${hole - 40}px, transparent ${hole + 160}px)` }} />
 
-      <PopIcon name="mending" x={0.156 * w} y={0.241 * h} size={100} at={BEAT} />
-      <PopIcon name="running" x={0.854 * w} y={0.231 * h} size={104} at={1.5 * BEAT} />
-      <PopIcon name="sparkles" x={0.844 * w} y={0.778 * h} size={58} at={2 * BEAT} />
-      <PopIcon name="lifting" x={0.151 * w} y={0.769 * h} size={100} at={2.5 * BEAT} />
+      <PopIcon name="heartbeat" x={0.156 * w} y={0.241 * h} size={90} color={C.red} at={BEAT} />
+      <PopIcon name="running" x={0.854 * w} y={0.231 * h} size={96} color={C.white} at={1.5 * BEAT} />
+      <PopIcon name="firstAid" x={0.844 * w} y={0.778 * h} size={42} color={C.red} at={2 * BEAT} />
+      <PopIcon name="weights" x={0.151 * w} y={0.769 * h} size={86} color={C.dim} at={2.5 * BEAT} />
 
       <div style={{ position: "relative", display: "flex", flexDirection: "column", alignItems: "center" }}>
         <div style={{ scale: pop }}>

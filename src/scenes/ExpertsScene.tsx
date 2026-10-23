@@ -8,9 +8,9 @@ import { BEAT, C, CLAMP, EASE_OUT, MONO, SANS } from "../theme";
 
 const CREDENTIALS: { tag: string; text: string; icon: IconName }[] = [
   { tag: "IOC", text: "올림픽 위원회 인증 스포츠 물리치료사", icon: "medal" },
-  { tag: "NSCA", text: "근력·컨디셔닝 전문가 (CSCS)", icon: "lifting" },
-  { tag: "TEAM", text: "국가대표 의무트레이너", icon: "stethoscope" },
-  { tag: "TEAM", text: "국가대표 피지컬트레이너", icon: "stopwatch" },
+  { tag: "NSCA", text: "근력·컨디셔닝 전문가 (CSCS)", icon: "weights" },
+  { tag: "TEAM", text: "국가대표 의무트레이너", icon: "firstAid" },
+  { tag: "TEAM", text: "국가대표 피지컬트레이너", icon: "running" },
 ];
 
 const COUNT_FROM = BEAT;
@@ -103,8 +103,8 @@ export const ExpertsScene: React.FC = () => {
         gap: portrait ? (tall ? 70 : 44) : 90,
       }}
     >
-      <PopIcon name="sparkles" x={0.932 * w} y={0.157 * h} size={56} at={BEAT} />
-      <PopIcon name="medal" x={0.068 * w} y={0.861 * h} size={86} at={2 * BEAT} />
+      <PopIcon name="firstAid" x={0.932 * w} y={0.157 * h} size={44} color={C.red} at={BEAT} />
+      <PopIcon name="medal" x={0.068 * w} y={0.861 * h} size={80} color={C.accentDim} at={2 * BEAT} />
 
       {portrait ? (
         // 세로: 게이지 옆에 라벨과 제목
@@ -144,7 +144,7 @@ export const ExpertsScene: React.FC = () => {
               }}
             >
               <div style={{ scale: interpolate(frame, [s, s + 12], [0.3, 1], { ...CLAMP, easing: EASE_OUT }) }}>
-                <Icon name={c.icon} size={46} />
+                <Icon name={c.icon} size={40} color={c.icon === "firstAid" ? C.red : C.accent} />
               </div>
               <span style={{ fontFamily: MONO, fontWeight: 700, fontSize: 22, color: C.accent, width: 74, letterSpacing: 2 }}>
                 {c.tag}

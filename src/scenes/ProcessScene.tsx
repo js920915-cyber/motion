@@ -66,7 +66,7 @@ export const ProcessScene: React.FC = () => {
         translate: `${interpolate(frame, [cardAt(0), cardAt(0) + 12], [40, 0], { ...CLAMP, easing: EASE_OUT })}px 0px`,
       }}
     >
-      <Icon name="chart" size={40} />
+      <Icon name="trendUp" size={34} color={C.red} />
       실제 사례로 보는 회복 곡선
     </div>
   );

@@ -38,13 +38,13 @@ export const LogoScene: React.FC = () => {
           <Halftone mode="rings" color="#DCE5F4" background={C.paper} hole={portrait ? logoW / 2 + 60 : 560} speed={1.2} />
         </AbsoluteFill>
 
-        {/* 센터 프로그램을 나타내는 컬러 아이콘 */}
-        <PopIcon name="running" x={0.245 * w} y={0.306 * h} size={120} at={3 * BEAT} />
-        <PopIcon name="heart" x={0.771 * w} y={0.278 * h} size={110} at={3 * BEAT + 3} />
-        <PopIcon name="lifting" x={0.781 * w} y={0.731 * h} size={116} at={3.5 * BEAT} />
-        <PopIcon name="leg" x={0.224 * w} y={0.713 * h} size={104} at={3.5 * BEAT + 3} />
-        <PopIcon name="sparkles" x={0.3125 * w} y={0.796 * h} size={56} at={4 * BEAT} />
-        <PopIcon name="medal" x={0.693 * w} y={0.176 * h} size={84} at={4 * BEAT + 3} />
+        {/* 센터 프로그램을 나타내는 의료·재활 아이콘 */}
+        <PopIcon name="running" x={0.245 * w} y={0.306 * h} size={110} color={C.navy} at={3 * BEAT} />
+        <PopIcon name="heartbeat" x={0.771 * w} y={0.278 * h} size={100} color={C.red} at={3 * BEAT + 3} />
+        <PopIcon name="weights" x={0.781 * w} y={0.731 * h} size={104} color={C.navy} at={3.5 * BEAT} />
+        <PopIcon name="leg" x={0.224 * w} y={0.713 * h} size={96} color={C.navy} at={3.5 * BEAT + 3} />
+        <PopIcon name="firstAid" x={0.3125 * w} y={0.796 * h} size={40} color={C.red} at={4 * BEAT} />
+        <PopIcon name="medal" x={0.693 * w} y={0.176 * h} size={78} color={C.navy} at={4 * BEAT + 3} />
 
         <AbsoluteFill style={{ justifyContent: "center", alignItems: "center", gap: 46 }}>
           <div style={{ scale: pop, opacity: frame >= 2 * BEAT ? 1 : 0 }}>

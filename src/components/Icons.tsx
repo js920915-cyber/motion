@@ -1,34 +1,31 @@
-import { Img, spring, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
+import { spring, useCurrentFrame, useVideoConfig } from "remotion";
+import { ICONS, IconName } from "./icon-data";
 
-// 컬러 3D 아이콘(public/icons/*.svg).
-// 출처: Microsoft Fluent Emoji(MIT) — THIRD_PARTY_NOTICES.md 참고. 사람 아이콘은 밝은 피부톤 버전.
-export type IconName =
-  | "lifting" // 역기 드는 사람: 근력
-  | "lotus" // 명상 자세: 자세·체형
-  | "leg" // 다리: 무릎·고관절
-  | "foot" // 발: 발·발목
-  | "biceps" // 굽힌 팔: 어깨·팔꿈치
-  | "massage" // 목·어깨 마사지: 목·허리
-  | "running" // 달리는 사람: 스포츠 재활
-  | "xray" // 엑스레이: 기능평가·분석
-  | "shield" // 방패: 부상 예방
-  | "chart" // 상승 그래프: 기능 향상
-  | "mending" // 붕대 감은 하트: 회복
-  | "medal" // 메달: 자격·수상
-  | "stethoscope" // 청진기: 의무
-  | "stopwatch" // 스톱워치: 트레이닝
-  | "heart" // 뛰는 하트
-  | "bandage" // 반창고
-  | "sparkles" // 반짝임
-  | "shoe"; // 러닝화
+export type { IconName };
 
-export const Icon: React.FC<{ name: IconName; size: number; style?: React.CSSProperties }> = ({ name, size, style }) => (
-  <Img src={staticFile(`icons/${name}.svg`)} style={{ width: size, height: size, display: "block", ...style }} />
-);
+// 단색 의료·재활 아이콘. color 한 가지로 칠합니다.
+export const Icon: React.FC<{ name: IconName; size: number; color: string; style?: React.CSSProperties }> = ({
+  name,
+  size,
+  color,
+  style,
+}) => {
+  const ic = ICONS[name];
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox={`0 0 ${ic.w} ${ic.h}`}
+      style={{ display: "block", color, ...style }}
+      dangerouslySetInnerHTML={{ __html: ic.body }}
+    />
+  );
+};
 
 type PopProps = {
   name: IconName;
   size: number;
+  color: string;
   // 아이콘 중심 좌표
   x: number;
   y: number;
@@ -40,7 +37,7 @@ type PopProps = {
 };
 
 // 지정한 프레임에 스프링으로 튀어나와 천천히 떠다니는 장식 아이콘
-export const PopIcon: React.FC<PopProps> = ({ name, size, x, y, at, rotate = 0, float = 8 }) => {
+export const PopIcon: React.FC<PopProps> = ({ name, size, color, x, y, at, rotate = 0, float = 6 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   if (frame < at) return null;
@@ -57,7 +54,7 @@ export const PopIcon: React.FC<PopProps> = ({ name, size, x, y, at, rotate = 0, 
         translate: `0px ${Math.sin((frame - at) / 14) * float}px`,
       }}
     >
-      <Icon name={name} size={size} />
+      <Icon name={name} size={size} color={color} />
     </div>
   );
 };
