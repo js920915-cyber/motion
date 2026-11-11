@@ -12,6 +12,10 @@ import { ProgramsScene } from "./scenes/ProgramsScene";
 import { FPS, SCENES, TOTAL } from "./theme";
 import { YouthSeminarReel } from "./youth/YouthSeminarReel";
 import { REEL, YOUTH_TOTAL } from "./youth/theme";
+import { YouthReelEditorial } from "./youth/themes/Editorial";
+import { YouthReelTactics } from "./youth/themes/Tactics";
+import { YouthReelScan } from "./youth/themes/Scan";
+import { TOTAL_FRAMES } from "./youth/themes/shared";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -35,6 +39,10 @@ export const RemotionRoot: React.FC = () => {
           {...REEL}
           defaultProps={{ music: true }}
         />
+        {/* 테마 3종(같은 문구, 다른 배경·연출·영상) */}
+        <Composition id="YouthReelEditorial" component={YouthReelEditorial} durationInFrames={TOTAL_FRAMES} fps={FPS} {...REEL} defaultProps={{ music: true }} />
+        <Composition id="YouthReelTactics" component={YouthReelTactics} durationInFrames={TOTAL_FRAMES} fps={FPS} {...REEL} defaultProps={{ music: true }} />
+        <Composition id="YouthReelScan" component={YouthReelScan} durationInFrames={TOTAL_FRAMES} fps={FPS} {...REEL} defaultProps={{ music: true }} />
       </Folder>
       <Folder name="Bumper">
         <Composition id="BumperV1" component={BumperV1} durationInFrames={150} fps={FPS} width={1920} height={1080} />
