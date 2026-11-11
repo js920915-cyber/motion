@@ -10,6 +10,8 @@ import { PainScene } from "./scenes/PainScene";
 import { ProcessScene } from "./scenes/ProcessScene";
 import { ProgramsScene } from "./scenes/ProgramsScene";
 import { FPS, SCENES, TOTAL } from "./theme";
+import { YouthSeminarReel } from "./youth/YouthSeminarReel";
+import { REEL, YOUTH_TOTAL } from "./youth/theme";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -23,6 +25,17 @@ export const RemotionRoot: React.FC = () => {
         height={1080}
         defaultProps={{ music: true }}
       />
+      <Folder name="Youth">
+        {/* 유소년 축구선수 부상예방 및 관리 설명회(2026.12.12) 릴스 15초 */}
+        <Composition
+          id="YouthSeminarReel"
+          component={YouthSeminarReel}
+          durationInFrames={YOUTH_TOTAL}
+          fps={FPS}
+          {...REEL}
+          defaultProps={{ music: true }}
+        />
+      </Folder>
       <Folder name="Bumper">
         <Composition id="BumperV1" component={BumperV1} durationInFrames={150} fps={FPS} width={1920} height={1080} />
       </Folder>
