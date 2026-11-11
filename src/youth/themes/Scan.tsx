@@ -1,12 +1,11 @@
-import { Video } from "@remotion/media";
 import { wipe } from "@remotion/transitions/wipe";
 import { AbsoluteFill, Img, interpolate, Sequence, spring, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { Sfx } from "../../components/Sfx";
 import { useImpactJolt } from "../components/Impact";
 import { CLAMP, EASE_OUT, MONO, SANS } from "../theme";
-import { COPY, Rise, type Shot, T, ThemeReel, useIn } from "./shared";
+import { COPY, type Clip, type Hook as HookCopy, Media, POINTS, Rise, type Shot, STARTS, T, ThemeReel, useIn } from "./shared";
 
-// 테마 C — 열화상 스캔(THERMAL SCAN)
+// 테마 C — 열화상 스캔(THERMAL SCAN) · 메시지: "통증이 없다고 괜찮을까요?"
 // 검은 배경, 영상을 열화상 색(보라→빨강→주황→노랑)으로 바꾸고, 스캔 라인과 관절 열점으로 분석하는 연출.
 const P = {
   black: "#06060A",
@@ -19,11 +18,17 @@ const P = {
 };
 const HEAT = `linear-gradient(90deg, #D02BC9 0%, ${P.red} 38%, ${P.orange} 68%, ${P.yellow} 100%)`;
 
+const HOOK: HookCopy = {
+  lines: ["통증이 없다고"],
+  punch: "괜찮을까요?",
+  sub: "눈에 보이지 않는 차이까지 확인합니다",
+};
+
 const SHOTS: Shot[] = [
   {
     src: "clips/single-leg-squat.mp4",
     trimBefore: 30,
-    lines: ["무릎이 버티는 힘,", "눈으로 확인합니다"],
+    lines: ["무릎이 안쪽으로", "무너지지 않는지"],
     focus: { cx: 560, cy: 1290, hw: 210, hh: 150, tag: "ZONE 01 · KNEE", label: "무릎 정렬" },
   },
   {
@@ -32,6 +37,19 @@ const SHOTS: Shot[] = [
     lines: ["몸통이 흔들리면", "다리에 부담이 갑니다"],
     focus: { cx: 595, cy: 1020, hw: 180, hh: 170, tag: "ZONE 02 · CORE", label: "몸통 회전" },
   },
+  {
+    src: "media/balance.mp4",
+    trimBefore: 0,
+    lines: ["한 발 균형으로", "발목을 확인합니다"],
+    focus: { cx: 565, cy: 1240, hw: 150, hh: 120, tag: "ZONE 03 · ANKLE", label: "발목 안정성" },
+  },
+];
+
+// 핵심 3가지 설명 컷(POINTS 순서)
+const ELEMENTS: Clip[] = [
+  { src: "clips/landmine-press.mp4", trimBefore: 39 },
+  { src: "media/bar-oscillation.mp4" },
+  { src: "clips/medicine-ball-throw.mp4", trimBefore: 20 },
 ];
 
 // 열화상 필터: 밝기만 남긴 뒤 색 지도(보라→빨강→주황→노랑→흰색)로 바꿉니다.
@@ -53,9 +71,9 @@ const ThermalDefs: React.FC = () => (
   </svg>
 );
 
-const ThermalVideo: React.FC<{ src: string; trimBefore: number; blur?: number; opacity?: number }> = ({ src, trimBefore, blur = 0, opacity = 1 }) => (
+const ThermalMedia: React.FC<{ clip: Clip; blur?: number; opacity?: number }> = ({ clip, blur = 0, opacity = 1 }) => (
   <AbsoluteFill style={{ filter: `url(#thermal)${blur ? ` blur(${blur}px)` : ""}`, opacity }}>
-    <Video src={staticFile(src)} trimBefore={trimBefore} muted objectFit="cover" style={{ width: 1080, height: 1920 }} />
+    <Media clip={clip} />
   </AbsoluteFill>
 );
 
@@ -103,7 +121,7 @@ const solid = (size: number, color = P.white): React.CSSProperties => ({
 });
 
 // ── 장면 1: 훅(외곽선 글자 → 열화상 글자 스캔) ─────────────────
-const SLAM = 30;
+const SLAM = 24;
 const Hook: React.FC = () => {
   const frame = useCurrentFrame();
   const jolt = useImpactJolt(SLAM, 0.5);
@@ -112,24 +130,23 @@ const Hook: React.FC = () => {
   const flash = interpolate(frame, [SLAM, SLAM + 5], [0.5, 0], CLAMP);
   return (
     <AbsoluteFill style={{ backgroundColor: P.black }}>
-      <ThermalVideo src="clips/keiser-rotational-press-b.mp4" trimBefore={0} blur={26} opacity={0.45} />
+      <ThermalMedia clip={{ src: "clips/keiser-rotational-press-b.mp4" }} blur={26} opacity={0.45} />
       <Grid />
       <AbsoluteFill style={{ transform: jolt }}>
         <div style={{ position: "absolute", top: 470, left: 80, right: 100 }}>
-          {COPY.hook.map((l, i) => (
-            <Rise key={l} at={i === 0 ? -6 : 6}>
-              <div style={{ ...solid(140), WebkitTextStroke: `3px ${P.white}`, color: `rgba(245,242,238,${fill(i === 0 ? -6 : 6)})` }}>{l}</div>
+          {HOOK.lines.map((l, i) => (
+            <Rise key={l} at={-6 + i * 12}>
+              <div style={{ ...solid(140), WebkitTextStroke: `3px ${P.white}`, color: `rgba(245,242,238,${fill(-6 + i * 12)})` }}>{l}</div>
             </Rise>
           ))}
           <div style={{ position: "relative", marginTop: 10, clipPath: `inset(0 0 ${(1 - reveal) * 100}% 0)` }}>
-            <div style={{ ...heatText(210), whiteSpace: "nowrap" }}>{COPY.hookPunch}</div>
+            <div style={{ ...heatText(170), whiteSpace: "nowrap" }}>{HOOK.punch}</div>
             {reveal < 1 && reveal > 0 ? (
               <div style={{ position: "absolute", left: -80, right: -100, top: `${reveal * 100}%`, height: 4, background: P.yellow, boxShadow: `0 0 20px ${P.yellow}` }} />
             ) : null}
           </div>
-          <div style={{ fontFamily: MONO, fontSize: 28, letterSpacing: 4, color: P.orange, marginTop: 30, opacity: useIn(SLAM + 8) }}>
-            ▲ HIGH RISK ZONE DETECTED
-          </div>
+          <div style={{ fontFamily: MONO, fontSize: 26, letterSpacing: 4, color: P.orange, marginTop: 34, opacity: useIn(SLAM + 6) }}>▲ HIDDEN RISK</div>
+          <div style={{ ...solid(48), marginTop: 8, opacity: useIn(SLAM + 12), transform: `translateY(${(1 - useIn(SLAM + 12)) * 20}px)` }}>{HOOK.sub}</div>
         </div>
       </AbsoluteFill>
       <AbsoluteFill style={{ backgroundColor: P.yellow, opacity: frame >= SLAM ? flash : 0, mixBlendMode: "screen" }} />
@@ -200,11 +217,11 @@ const ScanShot: React.FC<{ shot: Shot }> = ({ shot }) => {
   const flash = interpolate(frame, [0, 4], [0.5, 0], CLAMP);
   return (
     <AbsoluteFill style={{ backgroundColor: P.black }}>
-      <ThermalVideo src={shot.src} trimBefore={shot.trimBefore} />
+      <ThermalMedia clip={shot} />
       <Grid opacity={0.06} />
       <ScanLine period={45} />
       <AbsoluteFill style={{ background: "linear-gradient(180deg, rgba(6,6,10,0.95) 0%, rgba(6,6,10,0.8) 24%, rgba(6,6,10,0) 42%)" }} />
-      <HotSpot f={shot.focus} at={6} />
+      <HotSpot f={shot.focus} at={4} />
       <div style={{ position: "absolute", top: 290, left: 80, right: 110 }}>
         <Rise at={0}>
           <div style={solid(88)}>{shot.lines[0]}</div>
@@ -222,7 +239,7 @@ const ScanShot: React.FC<{ shot: Shot }> = ({ shot }) => {
 const Cause: React.FC = () => (
   <AbsoluteFill>
     {SHOTS.map((shot, i) => (
-      <Sequence key={shot.src} from={i * T.shot} durationInFrames={i === 0 ? T.shot : T.shot + 8} name={shot.focus.tag}>
+      <Sequence key={shot.src} from={i * T.shot} durationInFrames={i < SHOTS.length - 1 ? T.shot : T.shot + 8} name={shot.focus.tag}>
         <ScanShot shot={shot} />
         <Sfx name={i === 0 ? "whoosh" : "shutter"} at={0} volume={0.5} />
         <Sfx name="blip" at={8} volume={0.6} />
@@ -232,49 +249,52 @@ const Cause: React.FC = () => (
   </AbsoluteFill>
 );
 
-// ── 장면 3: 스캔 결과 3가지 ───────────────────────────────
-const Points: React.FC = () => {
+// ── 장면 3: 핵심 3가지 — 짧은 설명 컷(열화상 영상 + 스캔 결과 카드) ──
+const ElementScan: React.FC<{ i: number }> = ({ i }) => {
   const frame = useCurrentFrame();
+  const p = POINTS[i];
+  const r = interpolate(frame, [2, 10], [0, 1], { ...CLAMP, easing: EASE_OUT });
+  const bar = interpolate(frame, [6, 16], [0, 1], { ...CLAMP, easing: EASE_OUT });
+  const flash = interpolate(frame, [0, 4], [0.45, 0], CLAMP);
   return (
     <AbsoluteFill style={{ backgroundColor: P.black }}>
-      <ThermalVideo src="clips/landmine-press.mp4" trimBefore={39} blur={22} opacity={0.4} />
-      <Grid />
-      <div style={{ position: "absolute", top: 290, left: 80, right: 110 }}>
-        <Rise at={0}>
-          <div style={{ fontFamily: MONO, fontSize: 26, letterSpacing: 5, color: P.orange }}>SCAN RESULT · 3 ITEMS</div>
-        </Rise>
-        <Rise at={2}>
-          <div style={solid(80)}>설명회에서 알려드립니다</div>
-        </Rise>
+      <ThermalMedia clip={ELEMENTS[i]} />
+      <Grid opacity={0.06} />
+      <ScanLine period={36} offset={i * 12} />
+      <AbsoluteFill style={{ background: "linear-gradient(180deg, rgba(6,6,10,0.96) 0%, rgba(6,6,10,0.75) 22%, rgba(6,6,10,0) 36%, rgba(6,6,10,0) 50%, rgba(6,6,10,0.92) 72%)" }} />
+      <div style={{ position: "absolute", top: 290, left: 80, right: 110, display: "flex", justifyContent: "space-between", fontFamily: MONO, fontSize: 26, letterSpacing: 4 }}>
+        <span style={{ color: P.orange }}>SCAN RESULT</span>
+        <span style={{ color: P.white }}>{p.no} / 03</span>
       </div>
-      <div style={{ position: "absolute", top: 600, left: 80, right: 110, display: "flex", flexDirection: "column", gap: 54 }}>
-        {COPY.points.map((p, i) => {
-          const at = i * T.step + 2;
-          const local = frame - at;
-          const r = interpolate(local, [0, 8], [0, 1], { ...CLAMP, easing: EASE_OUT });
-          const bar = interpolate(local, [4, 14], [0, 1], { ...CLAMP, easing: EASE_OUT });
-          return (
-            <div key={p.no} style={{ position: "relative", clipPath: `inset(0 0 ${(1 - r) * 100}% 0)` }}>
-              <div style={{ display: "flex", gap: 18, alignItems: "center", fontFamily: MONO, fontSize: 24, letterSpacing: 3 }}>
-                <span style={{ background: P.orange, color: P.black, padding: "4px 10px", fontWeight: 700 }}>[{p.no}]</span>
-                <span style={{ color: P.dim }}>DETECTED — {p.en}</span>
-              </div>
-              <div style={{ ...solid(92), marginTop: 8 }}>{p.text}</div>
-              <div style={{ height: 10, marginTop: 10, width: `${bar * 100}%`, backgroundImage: HEAT }} />
-              {r > 0 && r < 1 ? <div style={{ position: "absolute", left: 0, right: 0, top: `${r * 100}%`, height: 4, background: P.yellow, boxShadow: `0 0 16px ${P.yellow}` }} /> : null}
-            </div>
-          );
-        })}
+      <div style={{ position: "absolute", top: 336, left: 80, ...solid(64) }}>설명회에서 알려드립니다</div>
+      <div style={{ position: "absolute", top: 1130, left: 80, right: 110, clipPath: `inset(0 0 ${(1 - r) * 100}% 0)` }}>
+        <div style={{ display: "flex", gap: 16, alignItems: "center", fontFamily: MONO, fontSize: 24, letterSpacing: 3 }}>
+          <span style={{ background: P.orange, color: P.black, padding: "4px 10px", fontWeight: 700 }}>[{p.no}]</span>
+          <span style={{ color: P.white, opacity: 0.8 }}>DETECTED — {p.en}</span>
+        </div>
+        <div style={{ ...solid(100), marginTop: 10 }}>{p.text}</div>
+        <div style={{ height: 10, marginTop: 8, width: `${bar * 100}%`, backgroundImage: HEAT }} />
+        <div style={{ ...solid(44, P.yellow), marginTop: 20, fontWeight: 700 }}>{p.desc}</div>
+        {r > 0 && r < 1 ? <div style={{ position: "absolute", left: 0, right: 0, top: `${r * 100}%`, height: 4, background: P.yellow, boxShadow: `0 0 16px ${P.yellow}` }} /> : null}
       </div>
-      {COPY.points.map((p, i) => (
-        <Sfx key={p.no} name="blip" at={i * T.step + 2} volume={0.8} />
-      ))}
+      <AbsoluteFill style={{ backgroundColor: P.white, opacity: flash, mixBlendMode: "screen" }} />
     </AbsoluteFill>
   );
 };
 
+const Points: React.FC = () => (
+  <AbsoluteFill>
+    {POINTS.map((p, i) => (
+      <Sequence key={p.no} from={i * T.kw} durationInFrames={i < 2 ? T.kw : T.kw + 8} name={p.text}>
+        <ElementScan i={i} />
+        <Sfx name="blip" at={2} volume={0.8} />
+      </Sequence>
+    ))}
+  </AbsoluteFill>
+);
+
 // ── 장면 4: 정보 ─────────────────────────────────────────
-const LOGO_AT = 90;
+const LOGO_AT = 80;
 const Info: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -349,7 +369,7 @@ const Info: React.FC = () => {
 const Viewfinder: React.FC = () => {
   const frame = useCurrentFrame();
   const rec = Math.floor(frame / 10) % 2 === 0;
-  const zone = frame < 90 ? "STANDBY" : frame < 210 ? "SCANNING" : frame < 300 ? "RESULT" : "BOOKING";
+  const zone = frame < STARTS.focus ? "STANDBY" : frame < STARTS.points ? "SCANNING" : frame < STARTS.info ? "RESULT" : "BOOKING";
   return (
     <AbsoluteFill style={{ pointerEvents: "none" }}>
       <ThermalDefs />

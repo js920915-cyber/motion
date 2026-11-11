@@ -1,13 +1,12 @@
-import { Video } from "@remotion/media";
 import { slide } from "@remotion/transitions/slide";
 import { wipe } from "@remotion/transitions/wipe";
 import { AbsoluteFill, Img, interpolate, random, Sequence, spring, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { Sfx } from "../../components/Sfx";
 import { useImpactJolt } from "../components/Impact";
 import { CLAMP, EASE_OUT, MONO, SANS } from "../theme";
-import { COPY, Rise, type Shot, T, ThemeReel, useIn } from "./shared";
+import { COPY, type Clip, type Hook as HookCopy, Media, POINTS, Rise, type Shot, STARTS, T, ThemeReel, useIn } from "./shared";
 
-// 테마 A — 매거진(EDITORIAL)
+// 테마 A — 매거진(EDITORIAL) · 메시지: "성장기 아이의 몸은 어른과 다릅니다"
 // 종이 질감 배경, 흑백 사진 프린트, 빨간 펜 손그림 동그라미, 큰 숫자 타이포.
 const P = {
   paper: "#EEE8DC",
@@ -16,6 +15,12 @@ const P = {
   blue: "#0E418B",
   gray: "#7D776B",
   white: "#FFFFFF",
+};
+
+const HOOK: HookCopy = {
+  lines: ["성장기 아이의 몸은", "어른과"],
+  punch: "다릅니다.",
+  sub: "그래서 관리도 달라야 합니다.",
 };
 
 const SHOTS: Shot[] = [
@@ -31,6 +36,19 @@ const SHOTS: Shot[] = [
     lines: ["한 발로 설 때", "발목이 흔들리면"],
     focus: { cx: 565, cy: 1240, hw: 150, hh: 120, tag: "FIG.B — ANKLE", label: "발목 안정성" },
   },
+  {
+    src: "clips/medicine-ball-throw.mp4",
+    trimBefore: 24,
+    lines: ["방향을 틀 때", "골반이 버티지 못하면"],
+    focus: { cx: 480, cy: 1150, hw: 190, hh: 160, tag: "FIG.C — HIP", label: "골반 회전" },
+  },
+];
+
+// 핵심 3가지 설명 컷(POINTS 순서)
+const ELEMENTS: Clip[] = [
+  { src: "clips/single-leg-squat.mp4", trimBefore: 30 },
+  { src: "media/session-photo.jpg" },
+  { src: "clips/keiser-rotational-press-b.mp4", trimBefore: 174 },
 ];
 
 // 종이 그레인(2프레임마다 무늬가 바뀌어 필름 느낌)
@@ -98,7 +116,7 @@ const MarkerCircle: React.FC<{ cx: number; cy: number; rx: number; ry: number; a
 };
 
 // ── 장면 1: 훅 ───────────────────────────────────────────
-const SLAM = 30;
+const SLAM = 28;
 const Hook: React.FC = () => {
   const frame = useCurrentFrame();
   const jolt = useImpactJolt(SLAM, 0.45);
@@ -127,10 +145,10 @@ const Hook: React.FC = () => {
       <AbsoluteFill style={{ transform: jolt }}>
         <div style={{ position: "absolute", top: 470, left: 80, right: 80 }}>
           <Rise at={-6}>
-            <div style={big(150)}>{COPY.hook[0]}</div>
+            <div style={big(112)}>{HOOK.lines[0]}</div>
           </Rise>
           <Rise at={6}>
-            <div style={big(150)}>{COPY.hook[1]}</div>
+            <div style={big(112)}>{HOOK.lines[1]}</div>
           </Rise>
           {/* 빨간 테이프가 쓸고 지나가며 '다칠까요?'가 드러남 */}
           <div style={{ position: "relative", marginTop: 26, marginLeft: -100, transform: "rotate(-4deg)", transformOrigin: "left center" }}>
@@ -143,11 +161,11 @@ const Hook: React.FC = () => {
                 boxShadow: "0 10px 0 rgba(0,0,0,0.12)",
               }}
             >
-              <div style={{ ...big(196, P.white), padding: "18px 0 0 100px", whiteSpace: "nowrap" }}>{COPY.hookPunch}</div>
+              <div style={{ ...big(196, P.white), padding: "18px 0 0 100px", whiteSpace: "nowrap" }}>{HOOK.punch}</div>
             </div>
           </div>
           <div style={{ fontFamily: SANS, fontWeight: 700, fontSize: 44, color: P.ink, marginTop: 70, opacity: sub, transform: `translateY(${(1 - sub) * 20}px)` }}>
-            반복되는 부상, 이유가 있습니다.
+            {HOOK.sub}
           </div>
         </div>
       </AbsoluteFill>
@@ -172,8 +190,8 @@ const PhotoShot: React.FC<{ shot: Shot; tilt: number }> = ({ shot, tilt }) => {
   const rx = shot.focus.hw * s * 1.25;
   const ry = shot.focus.hh * s * 1.2;
   const drop = spring({ frame, fps, config: { damping: 15, stiffness: 160 } });
-  const note = spring({ frame: frame - 22, fps, config: { damping: 12, stiffness: 220 } });
-  const arrow = interpolate(frame, [18, 28], [0, 1], { ...CLAMP, easing: EASE_OUT });
+  const note = spring({ frame: frame - 16, fps, config: { damping: 12, stiffness: 220 } });
+  const arrow = interpolate(frame, [12, 22], [0, 1], { ...CLAMP, easing: EASE_OUT });
 
   return (
     <Paper>
@@ -204,11 +222,11 @@ const PhotoShot: React.FC<{ shot: Shot; tilt: number }> = ({ shot, tilt }) => {
       >
         <div style={{ position: "relative", width: FRAME.w, height: FRAME.h, overflow: "hidden", background: "#222" }}>
           <div style={{ position: "absolute", top: -offY, left: 0, filter: "grayscale(1) contrast(1.25) brightness(1.05)" }}>
-            <Video src={staticFile(shot.src)} trimBefore={shot.trimBefore} muted objectFit="cover" style={{ width: FRAME.w, height: vh }} />
+            <Media clip={shot} width={FRAME.w} height={vh} />
           </div>
           <AbsoluteFill style={{ background: P.blue, mixBlendMode: "screen", opacity: 0.22 }} />
           <svg width={FRAME.w} height={FRAME.h} style={{ position: "absolute", inset: 0, overflow: "visible" }}>
-            <MarkerCircle cx={fx} cy={fy} rx={rx} ry={ry} at={8} seed={shot.focus.tag} />
+            <MarkerCircle cx={fx} cy={fy} rx={rx} ry={ry} at={6} seed={shot.focus.tag} />
             <path
               d={`M ${fx + rx + 150} ${fy - ry - 150} Q ${fx + rx + 40} ${fy - ry - 110} ${fx + rx * 0.75} ${fy - ry * 0.75}`}
               fill="none"
@@ -248,8 +266,8 @@ const PhotoShot: React.FC<{ shot: Shot; tilt: number }> = ({ shot, tilt }) => {
 const Cause: React.FC = () => (
   <AbsoluteFill>
     {SHOTS.map((shot, i) => (
-      <Sequence key={shot.src} from={i * T.shot} durationInFrames={i === 0 ? T.shot : T.shot + 8} name={shot.focus.tag}>
-        <PhotoShot shot={shot} tilt={i === 0 ? -2.5 : 2} />
+      <Sequence key={shot.src} from={i * T.shot} durationInFrames={i < SHOTS.length - 1 ? T.shot : T.shot + 8} name={shot.focus.tag}>
+        <PhotoShot shot={shot} tilt={[-2.5, 2, -1.5][i]} />
         <Sfx name="shutter" at={0} volume={0.6} />
         <Sfx name="pop" at={9} volume={0.5} />
       </Sequence>
@@ -257,52 +275,71 @@ const Cause: React.FC = () => (
   </AbsoluteFill>
 );
 
-// ── 장면 3: 핵심 3가지(큰 외곽선 숫자 + 형광펜) ────────────────
-const Points: React.FC = () => {
+// ── 장면 3: 핵심 3가지 — 짧은 설명 컷(사진 프린트 + 큰 외곽선 숫자 + 형광펜) ──
+const ElementCard: React.FC<{ i: number }> = ({ i }) => {
   const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const p = POINTS[i];
+  const drop = spring({ frame, fps, config: { damping: 15, stiffness: 170 } });
+  const mark = interpolate(frame, [8, 16], [0, 1], { ...CLAMP, easing: EASE_OUT });
+  const W = 860;
+  const H = 640;
   return (
     <Paper>
-      <div style={{ position: "absolute", top: 290, left: 80, right: 120 }}>
-        <Rise at={0}>
-          <div style={{ fontFamily: MONO, fontSize: 26, letterSpacing: 5, color: P.red }}>IN THIS SESSION</div>
-        </Rise>
-        <Rise at={2}>
-          <div style={big(84)}>설명회에서 알려드립니다</div>
+      <div style={{ position: "absolute", top: 270, left: 80, right: 120, display: "flex", justifyContent: "space-between", fontFamily: MONO, fontSize: 24, letterSpacing: 4, color: P.red }}>
+        <span>IN THIS SESSION</span>
+        <span>{p.no} / 03</span>
+      </div>
+      <div style={{ position: "absolute", top: 310, left: 70, display: "flex", alignItems: "flex-end", gap: 24 }}>
+        <div style={{ fontFamily: SANS, fontWeight: 900, fontSize: 230, lineHeight: 1, letterSpacing: "-0.06em", color: "transparent", WebkitTextStroke: `4px ${P.ink}` }}>{p.no}</div>
+        <div style={{ paddingBottom: 26 }}>
+          <div style={{ fontFamily: MONO, fontSize: 22, letterSpacing: 4, color: P.gray }}>{p.en}</div>
+          <div style={{ position: "relative", display: "inline-block" }}>
+            <div style={{ position: "absolute", left: -8, right: -8, bottom: 10, height: 34, background: P.red, opacity: 0.35, transformOrigin: "left", transform: `scaleX(${mark})` }} />
+            <div style={{ ...big(84), position: "relative" }}>{p.text}</div>
+          </div>
+        </div>
+      </div>
+      <div
+        style={{
+          position: "absolute",
+          left: (1080 - W) / 2 - 20,
+          top: 600,
+          padding: 16,
+          background: P.white,
+          boxShadow: "0 30px 50px rgba(20,20,20,0.25)",
+          transform: `translateY(${(1 - drop) * 140}px) rotate(${[1.5, -2, 1][i] * drop}deg)`,
+        }}
+      >
+        <div style={{ width: W, height: H, overflow: "hidden", position: "relative" }}>
+          <div style={{ position: "absolute", top: -(1920 * (W / 1080) - H) * 0.45, filter: "grayscale(1) contrast(1.2)" }}>
+            <Media clip={ELEMENTS[i]} width={W} height={1920 * (W / 1080)} />
+          </div>
+          <AbsoluteFill style={{ background: P.blue, mixBlendMode: "screen", opacity: 0.2 }} />
+        </div>
+      </div>
+      <div style={{ position: "absolute", top: 1310, left: 80, right: 120 }}>
+        <Rise at={6}>
+          <div style={{ fontFamily: SANS, fontWeight: 700, fontSize: 48, color: P.ink, letterSpacing: "-0.02em" }}>— {p.desc}</div>
         </Rise>
       </div>
-      <div style={{ position: "absolute", top: 560, left: 80, right: 100 }}>
-        {COPY.points.map((p, i) => {
-          const at = i * T.step + 2;
-          const inP = interpolate(frame, [at, at + 8], [0, 1], { ...CLAMP, easing: EASE_OUT });
-          const mark = interpolate(frame, [at + 5, at + 13], [0, 1], { ...CLAMP, easing: EASE_OUT });
-          return (
-            <div key={p.no} style={{ position: "relative", height: 280, opacity: inP }}>
-              <div style={{ height: 4, background: P.ink, width: `${inP * 100}%` }} />
-              <div style={{ display: "flex", alignItems: "center", gap: 30, transform: `translateY(${(1 - inP) * 40}px)` }}>
-                <div style={{ fontFamily: SANS, fontWeight: 900, fontSize: 220, lineHeight: 1.1, color: "transparent", WebkitTextStroke: `4px ${P.ink}`, letterSpacing: "-0.06em", width: 270 }}>
-                  {p.no}
-                </div>
-                <div>
-                  <div style={{ fontFamily: MONO, fontSize: 22, letterSpacing: 4, color: P.gray }}>{p.en}</div>
-                  <div style={{ position: "relative", display: "inline-block" }}>
-                    <div style={{ position: "absolute", left: -8, right: -8, bottom: 10, height: 34, background: P.red, opacity: 0.35, transformOrigin: "left", transform: `scaleX(${mark})` }} />
-                    <div style={{ ...big(88), position: "relative" }}>{p.text}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-      {COPY.points.map((p, i) => (
-        <Sfx key={p.no} name="thump" at={i * T.step + 2} volume={0.7} />
-      ))}
     </Paper>
   );
 };
 
+const Points: React.FC = () => (
+  <AbsoluteFill>
+    {POINTS.map((p, i) => (
+      <Sequence key={p.no} from={i * T.kw} durationInFrames={i < 2 ? T.kw : T.kw + 8} name={p.text}>
+        <ElementCard i={i} />
+        <Sfx name="shutter" at={0} volume={0.5} />
+      </Sequence>
+    ))}
+  </AbsoluteFill>
+);
+
 // ── 장면 4: 빨간 표지(SAVE THE DATE) ────────────────────────
-const LOGO_AT = 90;
+const LOGO_AT = 80;
 const Info: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -376,8 +413,8 @@ const Info: React.FC = () => {
 // 잡지 머리글(모든 장면 공통)
 const Masthead: React.FC = () => {
   const frame = useCurrentFrame();
-  const page = frame < 90 ? 1 : frame < 210 ? 2 : frame < 300 ? 3 : 4;
-  const onRed = frame >= 300;
+  const page = frame < STARTS.focus ? 1 : frame < STARTS.points ? 2 : frame < STARTS.info ? 3 : 4;
+  const onRed = frame >= STARTS.info;
   const color = onRed ? P.white : P.ink;
   return (
     <AbsoluteFill style={{ pointerEvents: "none" }}>

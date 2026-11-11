@@ -1,4 +1,3 @@
-import { Video } from "@remotion/media";
 import { slide } from "@remotion/transitions/slide";
 import { wipe } from "@remotion/transitions/wipe";
 import { useId } from "react";
@@ -6,9 +5,9 @@ import { AbsoluteFill, Img, interpolate, Sequence, spring, staticFile, useCurren
 import { Sfx } from "../../components/Sfx";
 import { SlamText, useImpactJolt } from "../components/Impact";
 import { CLAMP, EASE_OUT, MONO, SANS } from "../theme";
-import { COPY, Rise, type Shot, T, ThemeReel, useIn } from "./shared";
+import { COPY, type Clip, type Hook as HookCopy, Media, POINTS, Rise, type Shot, T, ThemeReel, useIn } from "./shared";
 
-// 테마 B — 전술판(TACTICS)
+// 테마 B — 전술판(TACTICS) · 메시지: "잘 뛰는 아이보다 오래 뛰는 아이"
 // 잔디 줄무늬 + 분필 라인 배경, 전술 화살표, 중계 화면 분석(텔레스트레이터) 표시.
 const P = {
   grass: "#1D5A33",
@@ -23,6 +22,12 @@ const P = {
 // 클립을 위로 올려(발이 릴스 하단 캡션에 가리지 않게) 쓰고, 아래는 중계 자막 바로 채웁니다.
 const LIFT = 260;
 
+const HOOK: HookCopy = {
+  lines: ["잘 뛰는 아이보다"],
+  punch: "오래 뛰는 아이",
+  sub: "부상 없이 뛰는 것도 실력입니다.",
+};
+
 const SHOTS: Shot[] = [
   {
     src: "clips/medicine-ball-throw.mp4",
@@ -33,9 +38,22 @@ const SHOTS: Shot[] = [
   {
     src: "clips/keiser-rotational-press-b.mp4",
     trimBefore: 174,
-    lines: ["버티는 디딤발이", "부상을 막습니다"],
+    lines: ["버티는 디딤발이", "오래 뛰게 합니다"],
     focus: { cx: 445, cy: 1665, hw: 170, hh: 60, tag: "PLANT FOOT", label: "디딤발 안정성" },
   },
+  {
+    src: "clips/landmine-press.mp4",
+    trimBefore: 39,
+    lines: ["착지가 안정돼야", "다음 동작이 빠릅니다"],
+    focus: { cx: 500, cy: 1350, hw: 170, hh: 190, tag: "LANDING", label: "착지 무릎" },
+  },
+];
+
+// 핵심 3가지 설명 컷(POINTS 순서)
+const ELEMENTS: Clip[] = [
+  { src: "media/balance.mp4" },
+  { src: "media/session-photo.jpg" },
+  { src: "media/keiser-press.mp4" },
 ];
 
 // 잔디 + 분필 경기장 라인(처음에 그려지고 이후엔 그대로)
@@ -125,9 +143,10 @@ const Token: React.FC<{ x: number; y: number; at: number; kind: "o" | "x"; label
 };
 
 // ── 장면 1: 전술판 훅 ─────────────────────────────────────
-const SLAM = 30;
+const SLAM = 22;
 const Hook: React.FC = () => {
   const jolt = useImpactJolt(SLAM, 0.6);
+  const subIn = useIn(SLAM + 14, 10);
   return (
     <AbsoluteFill style={{ transform: jolt }}>
       <Pitch drawAt={-10} />
@@ -140,19 +159,19 @@ const Hook: React.FC = () => {
         <Token x={840} y={1380} at={SLAM} kind="x" label="INJURY" />
       </svg>
       <div style={{ position: "absolute", top: 420, left: 80, right: 100 }}>
-        <Rise at={-6}>
-          <div style={chalk(140)}>{COPY.hook[0]}</div>
-        </Rise>
-        <Rise at={6}>
-          <div style={chalk(140)}>{COPY.hook[1]}</div>
-        </Rise>
-        <div style={{ marginTop: 10 }}>
+        {HOOK.lines.map((l, i) => (
+          <Rise key={l} at={-6 + i * 10}>
+            <div style={chalk(120)}>{l}</div>
+          </Rise>
+        ))}
+        <div style={{ marginTop: 14 }}>
           <SlamText at={SLAM} seed="tactics" color={P.chalk} splitA={P.red} splitB={P.yellow} dust={P.chalk}>
-            <div style={{ ...chalk(200, "inherit"), whiteSpace: "nowrap", background: P.red, display: "inline-block", padding: "0 24px" }}>
-              {COPY.hookPunch}
+            <div style={{ ...chalk(140, "inherit"), whiteSpace: "nowrap", background: P.red, display: "inline-block", padding: "4px 24px" }}>
+              {HOOK.punch}
             </div>
           </SlamText>
         </div>
+        <div style={{ ...chalk(46), marginTop: 36, opacity: subIn, transform: `translateY(${(1 - subIn) * 20}px)` }}>{HOOK.sub}</div>
       </div>
       <Sfx name="pop" at={2} volume={0.5} />
       <Sfx name="pop" at={8} volume={0.5} />
@@ -214,10 +233,10 @@ const ReplayShot: React.FC<{ shot: Shot }> = ({ shot }) => {
   return (
     <AbsoluteFill style={{ backgroundColor: P.ink }}>
       <div style={{ position: "absolute", left: 0, top: -LIFT, width: 1080, height: 1920, filter: "saturate(1.15) contrast(1.05)" }}>
-        <Video src={staticFile(shot.src)} trimBefore={shot.trimBefore} muted objectFit="cover" style={{ width: 1080, height: 1920 }} />
+        <Media clip={shot} />
       </div>
       <AbsoluteFill style={{ background: "linear-gradient(180deg, rgba(14,26,18,0.85) 0%, rgba(14,26,18,0) 32%)" }} />
-      <Telestrator f={shot.focus} at={6} />
+      <Telestrator f={shot.focus} at={4} />
       {/* 헤드라인: 중계 그래픽 박스 */}
       <div style={{ position: "absolute", top: 300, left: 80 }}>
         <Rise at={0}>
@@ -238,79 +257,86 @@ const ReplayShot: React.FC<{ shot: Shot }> = ({ shot }) => {
 const Cause: React.FC = () => (
   <AbsoluteFill>
     {SHOTS.map((shot, i) => (
-      <Sequence key={shot.src} from={i * T.shot} durationInFrames={i === 0 ? T.shot : T.shot + 8} name={shot.focus.tag}>
+      <Sequence key={shot.src} from={i * T.shot} durationInFrames={i < SHOTS.length - 1 ? T.shot : T.shot + 8} name={shot.focus.tag}>
         <ReplayShot shot={shot} />
         <Sfx name={i === 0 ? "whoosh" : "wipe"} at={0} volume={0.5} />
-        <Sfx name="blip" at={10} volume={0.7} />
+        <Sfx name="blip" at={8} volume={0.7} />
       </Sequence>
     ))}
   </AbsoluteFill>
 );
 
-// ── 장면 3: 라인업 보드 ───────────────────────────────────
-const Points: React.FC = () => {
+// ── 장면 3: 핵심 3가지 — 짧은 설명 컷(전체 화면 영상 + 중계 하단 자막) ──
+const ElementShot: React.FC<{ i: number }> = ({ i }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const ys = [700, 960, 1220];
+  const p = POINTS[i];
+  const tok = spring({ frame: frame - 2, fps, config: { damping: 11, stiffness: 240 } });
+  const bar = interpolate(frame, [0, 8], [0, 1], { ...CLAMP, easing: EASE_OUT });
+  const flash = interpolate(frame, [0, 3], [0.4, 0], CLAMP);
   return (
-    <AbsoluteFill>
-      <Pitch dim={0.35} />
-      <div style={{ position: "absolute", top: 300, left: 80, right: 100 }}>
-        <Rise at={0}>
-          <div style={{ fontFamily: MONO, fontSize: 26, letterSpacing: 5, color: P.yellow }}>GAME PLAN</div>
-        </Rise>
-        <Rise at={2}>
-          <div style={chalk(80)}>설명회에서 알려드립니다</div>
+    <AbsoluteFill style={{ backgroundColor: P.ink }}>
+      <AbsoluteFill style={{ filter: "saturate(1.1)" }}>
+        <Media clip={ELEMENTS[i]} />
+      </AbsoluteFill>
+      <AbsoluteFill style={{ background: "linear-gradient(180deg, rgba(14,26,18,0.85) 0%, rgba(14,26,18,0) 26%, rgba(14,26,18,0) 50%, rgba(14,26,18,0.9) 78%)" }} />
+      {/* 위: 게임 플랜 진행 표시 */}
+      <div style={{ position: "absolute", top: 290, left: 80, display: "flex", alignItems: "center", gap: 18 }}>
+        <span style={{ fontFamily: MONO, fontSize: 26, letterSpacing: 5, color: P.yellow }}>GAME PLAN</span>
+        {[0, 1, 2].map((k) => (
+          <span key={k} style={{ width: 22, height: 22, borderRadius: "50%", border: `4px solid ${P.chalk}`, background: k <= i ? P.chalk : "transparent" }} />
+        ))}
+      </div>
+      <div style={{ position: "absolute", top: 340, left: 80, ...chalk(64) }}>설명회에서 알려드립니다</div>
+      {/* 아래: 중계 하단 자막 */}
+      <div style={{ position: "absolute", left: 60, right: 100, top: 1150, display: "flex", alignItems: "center", gap: 30 }}>
+        <div
+          style={{
+            flex: "0 0 150px",
+            height: 150,
+            borderRadius: "50%",
+            background: i === 1 ? P.chalk : P.red,
+            color: i === 1 ? P.ink : P.chalk,
+            border: `8px solid ${P.chalk}`,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontFamily: MONO,
+            fontWeight: 700,
+            fontSize: 60,
+            transform: `scale(${tok})`,
+          }}
+        >
+          {p.no}
+        </div>
+        <div style={{ clipPath: `inset(0 ${(1 - bar) * 100}% 0 0)` }}>
+          <div style={{ fontFamily: MONO, fontSize: 24, letterSpacing: 4, color: P.yellow }}>{p.en}</div>
+          <div style={chalk(88)}>{p.text}</div>
+        </div>
+      </div>
+      <div style={{ position: "absolute", left: 60, right: 100, top: 1330, padding: "14px 24px", background: P.grass, borderLeft: `8px solid ${P.yellow}`, opacity: bar }}>
+        <Rise at={4}>
+          <div style={{ ...chalk(44), textShadow: "none" }}>{p.desc}</div>
         </Rise>
       </div>
-      <svg width={1080} height={1920} style={{ position: "absolute", inset: 0 }}>
-        <ArrowHeads />
-        <PassArrow d={`M 200 ${ys[0] + 90} L 200 ${ys[1] - 90}`} at={T.step - 4} len={200} />
-        <PassArrow d={`M 200 ${ys[1] + 90} L 200 ${ys[2] - 90}`} at={2 * T.step - 4} len={200} />
-      </svg>
-      {COPY.points.map((p, i) => {
-        const at = i * T.step + 2;
-        const s = spring({ frame: frame - at, fps, config: { damping: 11, stiffness: 240 } });
-        const lab = interpolate(frame, [at + 3, at + 11], [0, 1], { ...CLAMP, easing: EASE_OUT });
-        if (frame < at) return null;
-        return (
-          <div key={p.no} style={{ position: "absolute", left: 120, top: ys[i] - 80, display: "flex", alignItems: "center", gap: 44 }}>
-            <div
-              style={{
-                width: 160,
-                height: 160,
-                borderRadius: "50%",
-                background: i === 1 ? P.chalk : P.red,
-                color: i === 1 ? P.ink : P.chalk,
-                border: `8px solid ${P.chalk}`,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontFamily: MONO,
-                fontWeight: 700,
-                fontSize: 64,
-                transform: `scale(${s})`,
-                boxShadow: "0 10px 24px rgba(0,0,0,0.35)",
-              }}
-            >
-              {p.no}
-            </div>
-            <div style={{ opacity: lab, transform: `translateX(${(1 - lab) * -30}px)` }}>
-              <div style={{ fontFamily: MONO, fontSize: 24, letterSpacing: 4, color: P.yellow }}>{p.en}</div>
-              <div style={chalk(84)}>{p.text}</div>
-            </div>
-          </div>
-        );
-      })}
-      {COPY.points.map((p, i) => (
-        <Sfx key={p.no} name="thump" at={i * T.step + 2} volume={0.7} />
-      ))}
+      <AbsoluteFill style={{ backgroundColor: P.chalk, opacity: flash }} />
     </AbsoluteFill>
   );
 };
 
+const Points: React.FC = () => (
+  <AbsoluteFill>
+    {POINTS.map((p, i) => (
+      <Sequence key={p.no} from={i * T.kw} durationInFrames={i < 2 ? T.kw : T.kw + 8} name={p.text}>
+        <ElementShot i={i} />
+        <Sfx name="thump" at={2} volume={0.7} />
+      </Sequence>
+    ))}
+  </AbsoluteFill>
+);
+
 // ── 장면 4: 매치데이 카드 ─────────────────────────────────
-const LOGO_AT = 90;
+const LOGO_AT = 80;
 const Info: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
