@@ -12,7 +12,7 @@
 | 0–3s | HOOK | 우리 아이는 / 왜 맨날 / **다칠까요?** | 글자 낙하·카메라 반동·RGB 분리·먼지 (Remocn `impact-shake` 이식) |
 | 3–7s | CAUSE | 싱글레그 스쿼트 → 무릎 조준, 밸런스 → 발목 조준 | 뷰파인더 브래킷 (Remocn `bracket-focus` 이식) |
 | 7–10s | KEY POINTS | 01 부상 원인 이해 · 02 성장기 관리 · 03 움직임 향상 | 2비트마다 스코어박스형 행 (Remocn `score-bug` 박자 참고) |
-| 10–15s | JOIN US | 제목 + 일시·장소·대상·신청 표 + 로고 | What/When/Where 표 (Remocn `rsvp` 구성 참고) |
+| 10–15s | JOIN US | 제목 + 일시·장소·대상·신청(인스타 프로필 링크에서 신청) 표 + 로고 | What/When/Where 표 (Remocn `rsvp` 구성 참고) |
 
 장면 사이 전환은 기존 `PixelWipe`, 모서리 HUD는 기존 `Hud`를 세로용으로 옮긴 `ReelHud`입니다.
 컬러는 최신 브랜드 톤(로고 네이비·블루·레드, `src/youth/theme.ts`)입니다.

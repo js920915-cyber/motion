@@ -8,7 +8,8 @@ const ROWS = [
   { label: "일시", value: "2026.12.12 (토) 15:00–17:00" },
   { label: "장소", value: "R스포츠재활센터 (강서구 마곡)" },
   { label: "대상", value: "학부모 · 지도자" },
-  { label: "신청", value: "QR 접수", highlight: true },
+  // 영상 속 QR은 찍을 수 없으므로 릴스에서는 프로필 링크로 안내(포스터는 QR 접수)
+  { label: "신청", value: "인스타 프로필 링크에서 신청", highlight: true },
 ];
 const ROW_AT = 22;
 const ROW_STEP = 7;
