@@ -27,6 +27,7 @@ import {
   YouthSeriesTopic,
   YouthSeriesTrailer,
 } from "./youth/series";
+import { CURRICULUM, MAIN_BEATS, r4Length, YouthR4Curriculum, YouthR4Main } from "./youth/r4";
 import { TOTAL_FRAMES } from "./youth/themes/shared";
 
 export const RemotionRoot: React.FC = () => {
@@ -55,6 +56,13 @@ export const RemotionRoot: React.FC = () => {
         <Composition id="YouthReelEditorial" component={YouthReelEditorial} durationInFrames={TOTAL_FRAMES} fps={FPS} {...REEL} defaultProps={{ music: true }} />
         <Composition id="YouthReelTactics" component={YouthReelTactics} durationInFrames={TOTAL_FRAMES} fps={FPS} {...REEL} defaultProps={{ music: true }} />
         <Composition id="YouthReelScan" component={YouthReelScan} durationInFrames={TOTAL_FRAMES} fps={FPS} {...REEL} defaultProps={{ music: true }} />
+      </Folder>
+      <Folder name="YouthR4">
+        {/* 드라이브 '릴스_R4' 형식 + 드라이브 실제 영상 + 실제 커리큘럼 5개 */}
+        <Composition id="YouthR4Main" component={YouthR4Main} durationInFrames={r4Length(MAIN_BEATS)} fps={FPS} {...REEL} defaultProps={{ music: true }} />
+        {CURRICULUM.map((c, n) => (
+          <Composition key={n} id={`YouthR4Curriculum${n + 1}`} component={YouthR4Curriculum} durationInFrames={r4Length(c.beats)} fps={FPS} {...REEL} defaultProps={{ music: true, n }} />
+        ))}
       </Folder>
       <Folder name="YouthSeries">
         {/* 해외 설명회·강의 홍보 레퍼런스 구성의 홍보 시리즈. 강사 영상은 src/youth/series/blocks.tsx 의 SPEAKER */}
