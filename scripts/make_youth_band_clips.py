@@ -34,7 +34,6 @@ CLIPS = [
     ("keiser-b", "keiser-push.mp4", 3.8, 3.7, 0.50),
     # 허들사이드 드래그.MOV (5.4초)
     ("hurdle-a", "hurdle-side-drag.mov", 0.0, 2.8, 0.46),
-    ("hurdle-b", "hurdle-side-drag.mov", 2.6, 2.8, 0.60),
     # 무동력 스피드.MOV (28초)
     ("nonmotor-a", "nonmotor-speed.mov", 0.0, 3.8, 0.47),
     ("nonmotor-b", "nonmotor-speed.mov", 9.0, 3.8, 0.64),

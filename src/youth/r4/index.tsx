@@ -247,7 +247,7 @@ export const CURRICULUM: { title: [string, string]; beats: Beat[] }[] = [
     beats: [
       { clips: ["plate-jump-b"], text: "쉬고 나면 괜찮아지는데", len: 55 },
       { clips: ["hurdle-a"], text: "왜 또 같은 곳을 다칠까요?", len: 76 },
-      { clips: ["xray-knee", "hurdle-b"], text: "반복되는 부상의 이유를\n설명회에서 짚어드립니다", len: 114 },
+      { clips: ["xray-knee", "bosu-a"], text: "반복되는 부상의 이유를\n설명회에서 짚어드립니다", len: 114 },
       { clips: ["plate-coach-b", "ankle-shr-b"], text: CTA, len: 158 },
     ],
   },
