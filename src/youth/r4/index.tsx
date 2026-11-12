@@ -24,27 +24,58 @@ export type Music = { src: string; from: number };
 export const MAIN_MUSIC: Music = { src: "youth/music/main-track.m4a", from: 0 }; // videoplayback (1).m4a — 0~11초 잔잔한 도입, 11.5초부터 메인 구간
 export const CURRICULUM_MUSIC: Music = { src: "youth/music/before-and-after.m4a", from: 8 }; // Before And After — 8초부터 고조, 16초부터 본 구간
 
-export type Beat = { clip: string; text: string; len: number };
+// 한 문장(자막) = 한 beat. clips 가 2~3개면 문장 길이를 나눠 컷을 바꿉니다(긴 문장도 화면이 지루하지 않게).
+export type Beat = { clips: string[]; text: string; len: number };
+
+// 컷 사이 디졸브 길이(프레임)와 컷마다 천천히 확대되는 정도
+const DISSOLVE = 6;
+const ZOOM = 0.07;
+// 확대 기준점을 컷마다 살짝 바꿔 단조롭지 않게(모두 화면 가운데 근처)
+const ORIGINS = ["50% 50%", "42% 55%", "58% 45%", "50% 60%"];
+
+type Shot = { clip: string; start: number; len: number };
+export const toShots = (beats: Beat[]): Shot[] => {
+  const shots: Shot[] = [];
+  let t = 0;
+  for (const b of beats) {
+    const n = b.clips.length;
+    b.clips.forEach((clip, i) => {
+      const a = Math.round((b.len * i) / n);
+      const z = Math.round((b.len * (i + 1)) / n);
+      shots.push({ clip, start: t + a, len: z - a });
+    });
+    t += b.len;
+  }
+  return shots;
+};
+
+const ShotView: React.FC<{ clip: string; len: number; fadeIn: boolean; origin: string }> = ({ clip, len, fadeIn, origin }) => {
+  const frame = useCurrentFrame();
+  const o = fadeIn ? interpolate(frame, [0, DISSOLVE], [0, 1], CLAMP) : 1;
+  const z = 1 + interpolate(frame, [0, len], [0, ZOOM], CLAMP);
+  return (
+    <div style={{ position: "absolute", inset: 0, opacity: o, transform: `scale(${z})`, transformOrigin: origin }}>
+      <Video src={staticFile(`youth/band/${clip}.mp4`)} muted objectFit="cover" style={{ width: 1080, height: L.bandH }} />
+    </div>
+  );
+};
 
 // 나레이션 중 배경음악 크기(0~1). 목소리가 묻히면 낮추고, 음악이 너무 작으면 올리세요.
 const MUSIC_UNDER_VOICE = 0.2;
 
-const Band: React.FC<{ beats: Beat[] }> = ({ beats }) => {
-  let from = 0;
-  return (
-    <div style={{ position: "absolute", left: 0, top: L.bandTop, width: 1080, height: L.bandH, overflow: "hidden", background: "#111" }}>
-      {beats.map((b, i) => {
-        const el = (
-          <Sequence key={i} from={from} durationInFrames={b.len} layout="none">
-            <Video src={staticFile(`youth/band/${b.clip}.mp4`)} muted objectFit="cover" style={{ width: 1080, height: L.bandH }} />
-          </Sequence>
-        );
-        from += b.len;
-        return el;
-      })}
-    </div>
-  );
-};
+// 가운데 영상 띠: 컷마다 천천히 줌인, 컷 사이 짧은 디졸브(앞 컷 위로 다음 컷이 6프레임 동안 겹쳐 나타남)
+const Band: React.FC<{ beats: Beat[] }> = ({ beats }) => (
+  <div style={{ position: "absolute", left: 0, top: L.bandTop, width: 1080, height: L.bandH, overflow: "hidden", background: "#111" }}>
+    {toShots(beats).map((s, i) => {
+      const lead = i === 0 ? 0 : DISSOLVE;
+      return (
+        <Sequence key={i} from={s.start - lead} durationInFrames={s.len + lead} layout="none">
+          <ShotView clip={s.clip} len={s.len + lead} fadeIn={lead > 0} origin={ORIGINS[i % ORIGINS.length]} />
+        </Sequence>
+      );
+    })}
+  </div>
+);
 
 const Subtitles: React.FC<{ beats: Beat[] }> = ({ beats }) => {
   let from = 0;
@@ -185,64 +216,65 @@ export const r4Length = (beats: Beat[]) => beats.reduce((a, b) => a + b.len, 0) 
 // len = 나레이션(public/youth/narration/main.mp3)에서 문장 사이 쉼의 가운데까지(프레임, 30fps)
 export const MAIN_TITLE: [string, string] = ["유소년 축구선수", "'부상예방' 설명회"];
 export const MAIN_BEATS: Beat[] = [
-  { clip: "dribble-a", text: "학부모님, 지도자님.\n이런 고민 있으신가요?", len: 96 },
-  { clip: "dribble-b", text: "“우리 아이는 왜 맨날 다칠까요?”", len: 72 },
-  { clip: "blazepod-front", text: "12월 12일, R스포츠재활센터가\n그 답을 함께 찾습니다", len: 144 },
-  { clip: "blazepod-side", text: "1. 유소년 선수는 왜 성인과\n다르게 접근해야 하는지", len: 108 },
-  { clip: "plate-jump", text: "2. 부상은 왜 반복되는지", len: 59 },
-  { clip: "hexbar-youth", text: "3. 어린 나이에 근력운동,\n해도 괜찮은지", len: 84 },
-  { clip: "ladder-coach", text: "4. 개인별 부상 예방과\n퍼포먼스 프로그램", len: 84 },
-  { clip: "plate-coach", text: "5. 그리고 R스포츠재활센터의\n선수 관리 시스템까지", len: 108 },
-  { clip: "nonmotor-coach", text: "12.12(토) 오후 3시, 강서구 마곡\nR스포츠재활센터에서 만나요", len: 180 },
-  { clip: "keiser-youth", text: "신청은 인스타그램 프로필 링크에서", len: 102 },
+  { clips: ["dribble-a"], text: "학부모님, 지도자님.\n이런 고민 있으신가요?", len: 96 },
+  { clips: ["dribble-b"], text: "“우리 아이는 왜 맨날 다칠까요?”", len: 72 },
+  { clips: ["blazepod-front-a", "blazepod-side-a"], text: "12월 12일, R스포츠재활센터가\n그 답을 함께 찾습니다", len: 144 },
+  { clips: ["dribble-c", "rot-press-a"], text: "1. 유소년 선수는 왜 성인과\n다르게 접근해야 하는지", len: 108 },
+  { clips: ["plate-jump-a"], text: "2. 부상은 왜 반복되는지", len: 59 },
+  { clips: ["hexbar-a"], text: "3. 어린 나이에 근력운동,\n해도 괜찮은지", len: 84 },
+  { clips: ["ladder-coach"], text: "4. 개인별 부상 예방과\n퍼포먼스 프로그램", len: 84 },
+  { clips: ["plate-coach-a", "nonmotor-a"], text: "5. 그리고 R스포츠재활센터의\n선수 관리 시스템까지", len: 108 },
+  { clips: ["keiser-a", "blazepod-front-b", "nonmotor-c"], text: "12.12(토) 오후 3시, 강서구 마곡\nR스포츠재활센터에서 만나요", len: 180 },
+  { clips: ["keiser-b"], text: "신청은 인스타그램 프로필 링크에서", len: 102 },
 ];
 
 // ── 커리큘럼 5편(각 약 17~19초) ──────────────────────────────
+// 한 편 안에서는 같은 구간을 다시 쓰지 않고, 전체에서도 같은 구간은 최대 2번까지만 씁니다.
 const CTA = "12.12(토) 오후 3시\n신청은 프로필 링크에서";
 export const CURRICULUM: { title: [string, string]; beats: Beat[] }[] = [
   {
     title: ["유소년 선수는 왜", "'다르게' 접근할까?"],
     beats: [
-      { clip: "dribble-a", text: "같은 축구, 같은 훈련이라도", len: 67 },
-      { clip: "blazepod-side", text: "유소년 선수는 성인과\n다르게 접근해야 합니다", len: 110 },
-      { clip: "dribble-b", text: "그 이유를 설명회에서 알려드립니다", len: 86 },
-      { clip: "blazepod-front", text: CTA, len: 147 },
+      { clips: ["blazepod-side-b"], text: "같은 축구, 같은 훈련이라도", len: 67 },
+      { clips: ["hexbar-c", "single-leg-squat"], text: "유소년 선수는 성인과\n다르게 접근해야 합니다", len: 110 },
+      { clips: ["band-oscillation"], text: "그 이유를 설명회에서 알려드립니다", len: 86 },
+      { clips: ["balance", "medball"], text: CTA, len: 147 },
     ],
   },
   {
     title: ["부상은 왜", "'반복'될까?"],
     beats: [
-      { clip: "plate-jump", text: "쉬고 나면 괜찮아지는데", len: 55 },
-      { clip: "hurdle-drag", text: "왜 또 같은 곳을 다칠까요?", len: 76 },
-      { clip: "ladder-coach", text: "반복되는 부상의 이유를\n설명회에서 짚어드립니다", len: 114 },
-      { clip: "plate-coach", text: CTA, len: 158 },
+      { clips: ["plate-jump-b"], text: "쉬고 나면 괜찮아지는데", len: 55 },
+      { clips: ["hurdle-a"], text: "왜 또 같은 곳을 다칠까요?", len: 76 },
+      { clips: ["landmine", "hurdle-b"], text: "반복되는 부상의 이유를\n설명회에서 짚어드립니다", len: 114 },
+      { clips: ["plate-coach-b", "rot-press-b"], text: CTA, len: 158 },
     ],
   },
   {
     title: ["어린 나이에", "'근력운동' 괜찮을까?"],
     beats: [
-      { clip: "hexbar-youth", text: "많이들 궁금해하시는 질문", len: 51 },
-      { clip: "keiser-youth", text: "어린 나이에 근력운동,\n해도 괜찮을까요?", len: 87 },
-      { clip: "blazepod-front", text: "설명회에서 답해드립니다", len: 58 },
-      { clip: "dribble-a", text: CTA, len: 151 },
+      { clips: ["hexbar-b"], text: "많이들 궁금해하시는 질문", len: 51 },
+      { clips: ["keiser-press"], text: "어린 나이에 근력운동,\n해도 괜찮을까요?", len: 87 },
+      { clips: ["ladder-a"], text: "설명회에서 답해드립니다", len: 58 },
+      { clips: ["keiser-a", "dribble-a"], text: CTA, len: 151 },
     ],
   },
   {
     title: ["우리 아이에게", "'맞는' 프로그램"],
     beats: [
-      { clip: "blazepod-front", text: "아이마다 몸도, 목표도 다릅니다", len: 75 },
-      { clip: "ladder-coach", text: "개인별 부상 예방과\n퍼포먼스 프로그램", len: 82 },
-      { clip: "nonmotor-coach", text: "설명회에서 소개해드립니다", len: 60 },
-      { clip: "blazepod-side", text: CTA, len: 150 },
+      { clips: ["ladder-b"], text: "아이마다 몸도, 목표도 다릅니다", len: 75 },
+      { clips: ["nonmotor-b"], text: "개인별 부상 예방과\n퍼포먼스 프로그램", len: 82 },
+      { clips: ["blazepod-front-b"], text: "설명회에서 소개해드립니다", len: 60 },
+      { clips: ["dribble-c", "hexbar-a"], text: CTA, len: 150 },
     ],
   },
   {
     title: ["R스포츠재활센터의", "'선수 관리' 시스템"],
     beats: [
-      { clip: "plate-coach", text: "평가부터 재활, 복귀,\n퍼포먼스까지", len: 86 },
-      { clip: "nonmotor-coach", text: "선수를 어떻게 관리하는지", len: 55 },
-      { clip: "plate-jump", text: "설명회에서 소개해드립니다", len: 59 },
-      { clip: "keiser-youth", text: CTA, len: 135 },
+      { clips: ["plate-coach-a"], text: "평가부터 재활, 복귀,\n퍼포먼스까지", len: 86 },
+      { clips: ["nonmotor-c"], text: "선수를 어떻게 관리하는지", len: 55 },
+      { clips: ["plate-jump-a"], text: "설명회에서 소개해드립니다", len: 59 },
+      { clips: ["blazepod-side-a", "rot-press-a"], text: CTA, len: 135 },
     ],
   },
 ];
