@@ -15,6 +15,18 @@ import { REEL, YOUTH_TOTAL } from "./youth/theme";
 import { YouthReelEditorial } from "./youth/themes/Editorial";
 import { YouthReelTactics } from "./youth/themes/Tactics";
 import { YouthReelScan } from "./youth/themes/Scan";
+import {
+  ANNOUNCE_LEN,
+  COUNT_LEN,
+  SPEAKER_LEN,
+  TOPIC_LEN,
+  TRAILER_LEN,
+  YouthSeriesAnnounce,
+  YouthSeriesCountdown,
+  YouthSeriesSpeaker,
+  YouthSeriesTopic,
+  YouthSeriesTrailer,
+} from "./youth/series";
 import { TOTAL_FRAMES } from "./youth/themes/shared";
 
 export const RemotionRoot: React.FC = () => {
@@ -43,6 +55,17 @@ export const RemotionRoot: React.FC = () => {
         <Composition id="YouthReelEditorial" component={YouthReelEditorial} durationInFrames={TOTAL_FRAMES} fps={FPS} {...REEL} defaultProps={{ music: true }} />
         <Composition id="YouthReelTactics" component={YouthReelTactics} durationInFrames={TOTAL_FRAMES} fps={FPS} {...REEL} defaultProps={{ music: true }} />
         <Composition id="YouthReelScan" component={YouthReelScan} durationInFrames={TOTAL_FRAMES} fps={FPS} {...REEL} defaultProps={{ music: true }} />
+      </Folder>
+      <Folder name="YouthSeries">
+        {/* 해외 설명회·강의 홍보 레퍼런스 구성의 홍보 시리즈. 강사 영상은 src/youth/series/blocks.tsx 의 SPEAKER */}
+        <Composition id="YouthSeriesTrailer" component={YouthSeriesTrailer} durationInFrames={TRAILER_LEN} fps={FPS} {...REEL} defaultProps={{ music: true }} />
+        <Composition id="YouthSeriesAnnounce" component={YouthSeriesAnnounce} durationInFrames={ANNOUNCE_LEN} fps={FPS} {...REEL} defaultProps={{ music: true }} />
+        {[0, 1, 2].map((t) => (
+          <Composition key={t} id={`YouthSeriesTopic${t + 1}`} component={YouthSeriesTopic} durationInFrames={TOPIC_LEN} fps={FPS} {...REEL} defaultProps={{ music: true, topic: t }} />
+        ))}
+        <Composition id="YouthSeriesSpeaker" component={YouthSeriesSpeaker} durationInFrames={SPEAKER_LEN} fps={FPS} {...REEL} defaultProps={{ music: true }} />
+        <Composition id="YouthSeriesD7" component={YouthSeriesCountdown} durationInFrames={COUNT_LEN} fps={FPS} {...REEL} defaultProps={{ music: true, days: 7 }} />
+        <Composition id="YouthSeriesD1" component={YouthSeriesCountdown} durationInFrames={COUNT_LEN} fps={FPS} {...REEL} defaultProps={{ music: true, days: 1 }} />
       </Folder>
       <Folder name="Bumper">
         <Composition id="BumperV1" component={BumperV1} durationInFrames={150} fps={FPS} width={1920} height={1080} />
