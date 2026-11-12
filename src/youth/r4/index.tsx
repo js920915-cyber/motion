@@ -19,10 +19,15 @@ const L = {
 };
 const OUTRO = 182; // R4 원본 엔딩 길이(6.07초)
 
-// 음악: assets/music 의 곡을 scripts 로 잘라 public/youth/r4/bgm.* 로 둡니다. 없으면 무음.
-export const R4_MUSIC: string | null = null;
+// 배경음악: 드라이브 '음원' 폴더에서 받은 곡(public/youth/music/). from = 곡의 몇 초부터 쓸지
+export type Music = { src: string; from: number };
+export const MAIN_MUSIC: Music = { src: "youth/music/main-track.m4a", from: 0 }; // videoplayback (1).m4a — 0~11초 잔잔한 도입, 11.5초부터 메인 구간
+export const CURRICULUM_MUSIC: Music = { src: "youth/music/before-and-after.m4a", from: 8 }; // Before And After — 8초부터 고조, 16초부터 본 구간
 
 export type Beat = { clip: string; text: string; len: number };
+
+// 나레이션 중 배경음악 크기(0~1). 목소리가 묻히면 낮추고, 음악이 너무 작으면 올리세요.
+const MUSIC_UNDER_VOICE = 0.2;
 
 const Band: React.FC<{ beats: Beat[] }> = ({ beats }) => {
   let from = 0;
@@ -133,13 +138,14 @@ const Title: React.FC<{ lines: [string, string] }> = ({ lines }) => (
   </div>
 );
 
-export const R4Reel: React.FC<{ title: [string, string]; beats: Beat[]; badgeAt?: number; music: boolean; narration?: string }> = ({
-  title,
-  beats,
-  badgeAt,
-  music,
-  narration,
-}) => {
+export const R4Reel: React.FC<{
+  title: [string, string];
+  beats: Beat[];
+  badgeAt?: number;
+  music: boolean;
+  narration?: string;
+  track?: Music;
+}> = ({ title, beats, badgeAt, music, narration, track }) => {
   const { durationInFrames } = useVideoConfig();
   const body = beats.reduce((a, b) => a + b.len, 0);
   return (
@@ -160,12 +166,13 @@ export const R4Reel: React.FC<{ title: [string, string]; beats: Beat[]; badgeAt?
         <Video src={staticFile("youth/r4/outro.mp4")} muted style={{ width: 1080, height: 1920 }} />
       </Sequence>
       {/* 나레이션(Higgsfield · ElevenLabs 엔진 · 'Dylan' 프리셋 목소리). 자막 길이(beats.len)는 문장 사이 쉼에 맞춰 잘랐습니다. */}
-      {narration ? <Audio src={staticFile(narration)} volume={1} /> : null}
-      {music && R4_MUSIC ? (
+      {narration ? <Audio src={staticFile(narration)} volume={0.85} /> : null}
+      {music && track ? (
         <Audio
-          src={staticFile(R4_MUSIC)}
-          // 나레이션 중에는 낮게(0.18), 엔딩 로고에서 올렸다가(0.55) 끝에서 페이드아웃
-          volume={(f) => interpolate(f, [0, 6, body - 10, body + 10, durationInFrames - 40, durationInFrames - 2], [0, 0.18, 0.18, 0.55, 0.55, 0], CLAMP)}
+          src={staticFile(track.src)}
+          trimBefore={Math.round(track.from * 30)}
+          // 나레이션 중에는 낮게, 엔딩 로고에서 올렸다가(0.4) 끝에서 페이드아웃
+          volume={(f) => interpolate(f, [0, 6, body - 10, body + 10, durationInFrames - 40, durationInFrames - 2], [0, MUSIC_UNDER_VOICE, MUSIC_UNDER_VOICE, 0.4, 0.4, 0], CLAMP)}
         />
       ) : null}
     </AbsoluteFill>
@@ -241,8 +248,8 @@ export const CURRICULUM: { title: [string, string]; beats: Beat[] }[] = [
 ];
 
 export const YouthR4Main: React.FC<{ music: boolean }> = ({ music }) => (
-  <R4Reel title={MAIN_TITLE} beats={MAIN_BEATS} badgeAt={420} music={music} narration="youth/narration/main.mp3" />
+  <R4Reel title={MAIN_TITLE} beats={MAIN_BEATS} badgeAt={420} music={music} narration="youth/narration/main.mp3" track={MAIN_MUSIC} />
 );
 export const YouthR4Curriculum: React.FC<{ music: boolean; n: number }> = ({ music, n }) => (
-  <R4Reel title={CURRICULUM[n].title} beats={CURRICULUM[n].beats} badgeAt={150} music={music} narration={`youth/narration/curriculum${n + 1}.mp3`} />
+  <R4Reel title={CURRICULUM[n].title} beats={CURRICULUM[n].beats} badgeAt={150} music={music} narration={`youth/narration/curriculum${n + 1}.mp3`} track={CURRICULUM_MUSIC} />
 );
