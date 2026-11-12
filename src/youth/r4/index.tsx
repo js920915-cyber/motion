@@ -218,27 +218,28 @@ export const MAIN_TITLE: [string, string] = ["유소년 축구선수", "'부상�
 export const MAIN_BEATS: Beat[] = [
   { clips: ["dribble-a"], text: "학부모님, 지도자님.\n이런 고민 있으신가요?", len: 96 },
   { clips: ["dribble-b"], text: "“우리 아이는 왜 맨날 다칠까요?”", len: 72 },
-  { clips: ["blazepod-front-a", "blazepod-side-a"], text: "12월 12일, R스포츠재활센터가\n그 답을 함께 찾습니다", len: 144 },
-  { clips: ["dribble-c", "rot-press-a"], text: "1. 유소년 선수는 왜 성인과\n다르게 접근해야 하는지", len: 108 },
+  { clips: ["talk-r1-a", "blazepod-front-a"], text: "12월 12일, R스포츠재활센터가\n그 답을 함께 찾습니다", len: 144 },
+  { clips: ["dribble-c", "slj-a"], text: "1. 유소년 선수는 왜 성인과\n다르게 접근해야 하는지", len: 108 },
   { clips: ["plate-jump-a"], text: "2. 부상은 왜 반복되는지", len: 59 },
   { clips: ["hexbar-a"], text: "3. 어린 나이에 근력운동,\n해도 괜찮은지", len: 84 },
   { clips: ["ladder-coach"], text: "4. 개인별 부상 예방과\n퍼포먼스 프로그램", len: 84 },
   { clips: ["plate-coach-a", "nonmotor-a"], text: "5. 그리고 R스포츠재활센터의\n선수 관리 시스템까지", len: 108 },
-  { clips: ["keiser-a", "blazepod-front-b", "nonmotor-c"], text: "12.12(토) 오후 3시, 강서구 마곡\nR스포츠재활센터에서 만나요", len: 180 },
-  { clips: ["keiser-b"], text: "신청은 인스타그램 프로필 링크에서", len: 102 },
+  { clips: ["keiser-a", "blazepod-side-a", "bosu-a"], text: "12.12(토) 오후 3시, 강서구 마곡\nR스포츠재활센터에서 만나요", len: 180 },
+  { clips: ["talk-r5-a", "slj-b"], text: "신청은 인스타그램 프로필 링크에서", len: 102 },
 ];
 
 // ── 커리큘럼 5편(각 약 17~19초) ──────────────────────────────
-// 한 편 안에서는 같은 구간을 다시 쓰지 않고, 전체에서도 같은 구간은 최대 2번까지만 씁니다.
+// 드라이브 '유소년 설명회' 폴더 영상만 사용. 한 편 안에서는 같은 구간을 다시 쓰지 않고,
+// 전체에서도 같은 구간은 최대 2번. 'talk-*', 'xray-*' = 기존 릴스의 설명하는 장면(편마다 1~2초씩)
 const CTA = "12.12(토) 오후 3시\n신청은 프로필 링크에서";
 export const CURRICULUM: { title: [string, string]; beats: Beat[] }[] = [
   {
     title: ["유소년 선수는 왜", "'다르게' 접근할까?"],
     beats: [
       { clips: ["blazepod-side-b"], text: "같은 축구, 같은 훈련이라도", len: 67 },
-      { clips: ["hexbar-c", "single-leg-squat"], text: "유소년 선수는 성인과\n다르게 접근해야 합니다", len: 110 },
-      { clips: ["band-oscillation"], text: "그 이유를 설명회에서 알려드립니다", len: 86 },
-      { clips: ["balance", "medball"], text: CTA, len: 147 },
+      { clips: ["hexbar-c", "slj-c"], text: "유소년 선수는 성인과\n다르게 접근해야 합니다", len: 110 },
+      { clips: ["talk-r2"], text: "그 이유를 설명회에서 알려드립니다", len: 86 },
+      { clips: ["dribble-b", "ankle-shr-a"], text: CTA, len: 147 },
     ],
   },
   {
@@ -246,17 +247,17 @@ export const CURRICULUM: { title: [string, string]; beats: Beat[] }[] = [
     beats: [
       { clips: ["plate-jump-b"], text: "쉬고 나면 괜찮아지는데", len: 55 },
       { clips: ["hurdle-a"], text: "왜 또 같은 곳을 다칠까요?", len: 76 },
-      { clips: ["landmine", "hurdle-b"], text: "반복되는 부상의 이유를\n설명회에서 짚어드립니다", len: 114 },
-      { clips: ["plate-coach-b", "rot-press-b"], text: CTA, len: 158 },
+      { clips: ["xray-knee", "hurdle-b"], text: "반복되는 부상의 이유를\n설명회에서 짚어드립니다", len: 114 },
+      { clips: ["plate-coach-b", "ankle-shr-b"], text: CTA, len: 158 },
     ],
   },
   {
     title: ["어린 나이에", "'근력운동' 괜찮을까?"],
     beats: [
       { clips: ["hexbar-b"], text: "많이들 궁금해하시는 질문", len: 51 },
-      { clips: ["keiser-press"], text: "어린 나이에 근력운동,\n해도 괜찮을까요?", len: 87 },
-      { clips: ["ladder-a"], text: "설명회에서 답해드립니다", len: 58 },
-      { clips: ["keiser-a", "dribble-a"], text: CTA, len: 151 },
+      { clips: ["keiser-b"], text: "어린 나이에 근력운동,\n해도 괜찮을까요?", len: 87 },
+      { clips: ["talk-r1-b"], text: "설명회에서 답해드립니다", len: 58 },
+      { clips: ["keiser-a", "dribble-c"], text: CTA, len: 151 },
     ],
   },
   {
@@ -264,8 +265,8 @@ export const CURRICULUM: { title: [string, string]; beats: Beat[] }[] = [
     beats: [
       { clips: ["ladder-b"], text: "아이마다 몸도, 목표도 다릅니다", len: 75 },
       { clips: ["nonmotor-b"], text: "개인별 부상 예방과\n퍼포먼스 프로그램", len: 82 },
-      { clips: ["blazepod-front-b"], text: "설명회에서 소개해드립니다", len: 60 },
-      { clips: ["dribble-c", "hexbar-a"], text: CTA, len: 150 },
+      { clips: ["talk-r5-b"], text: "설명회에서 소개해드립니다", len: 60 },
+      { clips: ["blazepod-front-b", "slj-a"], text: CTA, len: 150 },
     ],
   },
   {
@@ -273,8 +274,8 @@ export const CURRICULUM: { title: [string, string]; beats: Beat[] }[] = [
     beats: [
       { clips: ["plate-coach-a"], text: "평가부터 재활, 복귀,\n퍼포먼스까지", len: 86 },
       { clips: ["nonmotor-c"], text: "선수를 어떻게 관리하는지", len: 55 },
-      { clips: ["plate-jump-a"], text: "설명회에서 소개해드립니다", len: 59 },
-      { clips: ["blazepod-side-a", "rot-press-a"], text: CTA, len: 135 },
+      { clips: ["xray-heel"], text: "설명회에서 소개해드립니다", len: 59 },
+      { clips: ["ladder-a", "slj-c"], text: CTA, len: 135 },
     ],
   },
 ];

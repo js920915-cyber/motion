@@ -1,4 +1,4 @@
-"""드라이브 '유소년 설명회' 영상 + 센터 촬영본 → R4 형식 가운데 띠(1080x608)용 구간 클립(약 3~4초)
+"""드라이브 '유소년 설명회' 영상 → R4 형식 가운데 띠(1080x608)용 구간 클립(약 3~4초)
 
     python3 scripts/make_youth_band_clips.py <드라이브 영상 폴더>
 
@@ -13,7 +13,7 @@ OUT = Path(__file__).resolve().parent.parent / "public" / "youth" / "band"
 OUT.mkdir(parents=True, exist_ok=True)
 
 # 이름, 원본, 시작(초), 길이(초), 띠 중심(세로 비율)
-# 원본: 드라이브 '유소년 설명회' 영상(영문 이름으로 받은 파일) 또는 "repo:" = 저장소 public/ 안의 센터 촬영본
+# 원본: 드라이브 '유소년 설명회' 폴더 영상(영문 이름으로 받은 파일)만 씁니다. ("repo:" = 저장소 public/ 안의 파일도 쓸 수 있음)
 # 같은 원본이라도 구간·띠 위치를 달리해 서로 다른 장면이 되게 했습니다.
 CLIPS = [
     # 유소년 드리블 살짝 노란옷.mp4 (12초, 60fps)
@@ -48,23 +48,35 @@ CLIPS = [
     ("ladder-a", "switch-short.mov", 0.5, 3.8, 0.62),
     ("ladder-b", "switch-short.mov", 4.8, 3.8, 0.52),
     ("ladder-coach", "switch-short.mov", 9.0, 3.8, 0.45),
-    # 센터 촬영본(저장소)
-    ("single-leg-squat", "repo:clips/single-leg-squat.mp4", 0.6, 3.8, 0.66),
-    ("landmine", "repo:clips/landmine-press.mp4", 1.2, 3.8, 0.62),
-    ("rot-press-a", "repo:clips/keiser-rotational-press-a.mp4", 0.8, 3.8, 0.56),
-    ("rot-press-b", "repo:clips/keiser-rotational-press-b.mp4", 4.2, 3.8, 0.56),
-    ("medball", "repo:clips/medicine-ball-throw.mp4", 0.0, 3.0, 0.55),
-    ("balance", "repo:media/balance.mp4", 0.0, 4.2, 0.64),
-    ("band-oscillation", "repo:media/bar-oscillation.mp4", 0.0, 3.36, 0.42),
-    ("keiser-press", "repo:media/keiser-press.mp4", 0.0, 4.2, 0.56),
+    # 카이저 SLJ.mov (21초) — 하네스 메고 한 발 점프하는 유소년
+    ("slj-a", "keiser-slj.mov", 0.5, 3.8, 0.60),
+    ("slj-b", "keiser-slj.mov", 7.6, 3.8, 0.58),
+    ("slj-c", "keiser-slj.mov", 13.6, 3.8, 0.58),
+    # 코일잡고 ankle SHR.mov (9.2초) — 계단에서 맨발 발목 운동
+    ("ankle-shr-a", "coil-ankle-shr.mov", 0.3, 3.8, 0.56),
+    ("ankle-shr-b", "coil-ankle-shr.mov", 4.9, 3.8, 0.50),
+    # 발목 Bosu 착지.mp4 (6초)
+    ("bosu-a", "ankle-bosu-landing.mp4", 0.2, 3.3, 0.74),
+    # 설명하는 장면 — 기존 릴스(R1·R2·R3·R5)의 가운데 영상 띠를 그대로 잘라 씀(center = "band")
+    ("talk-r1-a", "r1-reel.mp4", 8.0, 3.4, "band"),  # 릴스_R1_같은 13살 다른 성장
+    ("talk-r1-b", "r1-reel.mp4", 25.5, 3.4, "band"),
+    ("talk-r2", "r2-reel.mp4", 1.0, 3.4, "band"),  # 릴스_R2_아스널 4원칙_1 (9초부터는 목록 자막이 겹쳐서 앞부분만)
+    ("xray-knee", "r3-reel.mp4", 1.2, 3.4, "band"),  # 릴스_R3_성장통 쉬어야 할까 — 오스굿-슐라터병 X선
+    ("xray-heel", "r3-reel.mp4", 5.4, 3.4, "band"),  # 세버병 X선
+    ("talk-r5-a", "r5-reel.mp4", 10.0, 3.4, "band"),  # 릴스_R5_선수 A vs 선수 B
+    ("talk-r5-b", "r5-reel.mp4", 30.0, 3.4, "band"),
 ]
 
 REPO_PUBLIC = Path(__file__).resolve().parent.parent / "public"
 
 for name, src, ss, dur, c in CLIPS:
     path = REPO_PUBLIC / src[5:] if src.startswith("repo:") else SRC / src
-    top = max(0, min(1920 - 608, round(c * 1920 - 304)))
-    vf = f"scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,crop=1080:608:0:{top},fps=30,format=yuv420p"
+    if c == "band":
+        # 릴스(1080x1920) 안의 가로 영상 띠(y 656~1262)를 그대로
+        vf = "crop=1080:606:0:656,scale=1080:608,fps=30,format=yuv420p"
+    else:
+        top = max(0, min(1920 - 608, round(c * 1920 - 304)))
+        vf = f"scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,crop=1080:608:0:{top},fps=30,format=yuv420p"
     subprocess.run(
         ["ffmpeg", "-nostdin", "-v", "error", "-y", "-ss", str(ss), "-t", str(dur), "-i", str(path), "-an",
          "-vf", vf, "-c:v", "libx264", "-crf", "22", "-preset", "medium", "-movflags", "+faststart", str(OUT / f"{name}.mp4")],
