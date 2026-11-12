@@ -55,3 +55,13 @@
 | [Infraction, Emerel Gray – Inferno (Brazilian Funk Sport)](https://commons.wikimedia.org/wiki/File:Infraction,_Emerel_Gray_-_Inferno_(Brazilian_Funk_Sport).ogg) | 스포츠·에너지 | Music: Infraction & Emerel Gray, CC BY 3.0 |
 
 작업 환경에서 위키미디어가 요청 과다(429)로 막혀 있어 직접 받지 못했습니다. 브라우저에서 받은 파일을 드라이브 '유소년 설명회' 폴더에 넣어 주시면 넣어 드립니다.
+
+## 나레이션 (2026-11-12 추가)
+
+- 목소리: Higgsfield `text2speech_v2` · ElevenLabs 엔진 · 프리셋 'Dylan'(voice_id `b847bc29-f184-583a-8ad9-d1f1e16d1a60`)
+- 파일: `public/youth/narration/main.mp3`, `curriculum1~5.mp3` (6개 생성에 약 1 크레딧)
+- 발음 때문에 원고는 "알스포츠재활센터", "십이월 십이일", "오후 세 시"처럼 읽는 대로 적었고, 자막은 원래 표기(R스포츠재활센터, 12.12)로 둡니다.
+- 자막 길이(`beats[].len`)는 나레이션의 문장 사이 쉼(ffmpeg silencedetect) 가운데를 경계로 잡았습니다. 원고를 바꿔 다시 만들면 이 숫자도 다시 맞춰야 합니다.
+- 길이: 메인 40.6초(나레이션 34.6 + 엔딩 6), 커리큘럼 17.2~19.7초
+- 음량: 약 -14 LUFS(인스타 권장 수준)
+- 음악이 들어가면 나레이션 중에는 0.18로 낮추고 엔딩에서 0.55로 올리도록 되어 있습니다(`R4_MUSIC`).
